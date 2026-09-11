@@ -1,373 +1,614 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "panels": [
     {
-      "annotations": {
-        "list": [
-          {
-            "builtIn": 1,
-            "datasource": {
-              "type": "grafana",
-              "uid": "-- Grafana --"
-            },
-            "enable": true,
-            "hide": true,
-            "name": "Annotations & Alerts",
-            "type": "dashboard"
-          }
-        ]
+      "type": "stat",
+      "title": "Total hosts",
+      "datasource": {
+        "type": "postgres",
+        "uid": "falcon-postgres"
       },
-      "editable": true,
-      "fiscalYearStartMonth": 0,
-      "graphTooltip": 0,
-      "links": [],
-      "liveNow": false,
-      "panels": [
-        {
-          "type": "stat",
-          "title": "Total hosts",
-          "datasource": {
-            "type": "postgres",
-            "uid": "falcon-postgres"
-          },
-          "gridPos": {
-            "x": 0,
-            "y": 0,
-            "w": 6,
-            "h": 4
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "color": {
-                "mode": "fixed"
-              }
-            },
-            "overrides": []
-          },
-          "options": {
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "colorMode": "value",
-            "graphMode": "none",
-            "textMode": "auto",
-            "justifyMode": "auto"
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "postgres",
-                "uid": "falcon-postgres"
-              },
-              "format": "table",
-              "rawQuery": true,
-              "rawSql": "SELECT count(*) AS v FROM falcon.v_host_coverage WHERE ('${host}' = '' OR hostname ILIKE '%${host}%') AND platform_name IN (${platform:singlequote})",
-              "refId": "A"
-            }
-          ]
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "fixed"
+          }
         },
-        {
-          "type": "stat",
-          "title": "Stale sensors (>7d)",
-          "datasource": {
-            "type": "postgres",
-            "uid": "falcon-postgres"
-          },
-          "gridPos": {
-            "x": 6,
-            "y": 0,
-            "w": 6,
-            "h": 4
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "color": {
-                "mode": "fixed"
-              }
-            },
-            "overrides": []
-          },
-          "options": {
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "colorMode": "value",
-            "graphMode": "none",
-            "textMode": "auto",
-            "justifyMode": "auto"
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "postgres",
-                "uid": "falcon-postgres"
-              },
-              "format": "table",
-              "rawQuery": true,
-              "rawSql": "SELECT count(*) FILTER (WHERE stale_sensor) AS v FROM falcon.v_host_coverage WHERE ('${host}' = '' OR hostname ILIKE '%${host}%') AND platform_name IN (${platform:singlequote})",
-              "refId": "A"
-            }
-          ]
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
         },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "auto"
+      },
+      "targets": [
         {
-          "type": "stat",
-          "title": "Reduced functionality (RFM)",
           "datasource": {
             "type": "postgres",
             "uid": "falcon-postgres"
           },
-          "gridPos": {
-            "x": 12,
-            "y": 0,
-            "w": 6,
-            "h": 4
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "color": {
-                "mode": "fixed"
-              }
-            },
-            "overrides": []
-          },
-          "options": {
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "colorMode": "value",
-            "graphMode": "none",
-            "textMode": "auto",
-            "justifyMode": "auto"
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "postgres",
-                "uid": "falcon-postgres"
-              },
-              "format": "table",
-              "rawQuery": true,
-              "rawSql": "SELECT count(*) FILTER (WHERE reduced_functionality_mode = 'yes') AS v FROM falcon.v_host_coverage WHERE ('${host}' = '' OR hostname ILIKE '%${host}%') AND platform_name IN (${platform:singlequote})",
-              "refId": "A"
-            }
-          ]
-        },
-        {
-          "type": "stat",
-          "title": "Servers",
-          "datasource": {
-            "type": "postgres",
-            "uid": "falcon-postgres"
-          },
-          "gridPos": {
-            "x": 18,
-            "y": 0,
-            "w": 6,
-            "h": 4
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "color": {
-                "mode": "fixed"
-              }
-            },
-            "overrides": []
-          },
-          "options": {
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "colorMode": "value",
-            "graphMode": "none",
-            "textMode": "auto",
-            "justifyMode": "auto"
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "postgres",
-                "uid": "falcon-postgres"
-              },
-              "format": "table",
-              "rawQuery": true,
-              "rawSql": "SELECT count(*) FILTER (WHERE product_type_desc = 'Server') AS v FROM falcon.v_host_coverage WHERE ('${host}' = '' OR hostname ILIKE '%${host}%') AND platform_name IN (${platform:singlequote})",
-              "refId": "A"
-            }
-          ]
-        },
-        {
-          "type": "piechart",
-          "title": "Hosts by platform",
-          "datasource": {
-            "type": "postgres",
-            "uid": "falcon-postgres"
-          },
-          "gridPos": {
-            "x": 0,
-            "y": 4,
-            "w": 8,
-            "h": 9
-          },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {
-                "hideFrom": {}
-              }
-            },
-            "overrides": []
-          },
-          "options": {
-            "pieType": "donut",
-            "legend": {
-              "displayMode": "table",
-              "placement": "right",
-              "values": [
-                "value"
-              ]
-            },
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "values": true
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "postgres",
-                "uid": "falcon-postgres"
-              },
-              "format": "table",
-              "rawQuery": true,
-              "rawSql": "SELECT platform_name AS metric, count(*) AS value FROM falcon.v_host_coverage WHERE ('${host}' = '' OR hostname ILIKE '%${host}%') AND platform_name IN (${platform:singlequote}) GROUP BY platform_name ORDER BY 2 DESC",
-              "refId": "A"
-            }
-          ]
-        },
-        {
-          "type": "table",
-          "title": "Hosts",
-          "datasource": {
-            "type": "postgres",
-            "uid": "falcon-postgres"
-          },
-          "gridPos": {
-            "x": 8,
-            "y": 4,
-            "w": 16,
-            "h": 9
-          },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {
-                "filterable": true,
-                "align": "auto"
-              }
-            },
-            "overrides": []
-          },
-          "options": {
-            "showHeader": true,
-            "footer": {
-              "show": false
-            },
-            "cellHeight": "sm"
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "postgres",
-                "uid": "falcon-postgres"
-              },
-              "format": "table",
-              "rawQuery": true,
-              "rawSql": "SELECT hostname, platform_name AS platform, os_version, product_type_desc AS type, agent_version, reduced_functionality_mode AS rfm, cs_last_seen AS last_seen, open_total, open_critical FROM falcon.v_host_coverage WHERE ('${host}' = '' OR hostname ILIKE '%${host}%') AND platform_name IN (${platform:singlequote}) ORDER BY open_critical DESC, open_total DESC",
-              "refId": "A"
-            }
-          ]
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH base AS (  SELECT h.aid, h.hostname, h.local_ip, h.external_ip, h.platform_name, h.os_version,         h.product_type_desc, h.agent_version, h.reduced_functionality_mode, h.cs_last_seen,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,         a.raw->>'cloud_account_id'  AS cloud_account,         COALESCE(vc.open_total, 0)    AS open_total,         COALESCE(vc.open_critical, 0) AS open_critical  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE  LEFT JOIN (SELECT aid, count(*) FILTER (WHERE status='open') AS open_total,             count(*) FILTER (WHERE status='open' AND severity='CRITICAL') AS open_critical             FROM falcon.vulns GROUP BY aid) vc ON vc.aid = h.aid),classified AS (  SELECT *,    CASE      WHEN cloud_provider = 'AWS' THEN 'AWS'      WHEN external_ip LIKE '92.207.176.2%'        AND (local_ip LIKE '10.20.7.%' OR local_ip LIKE '10.20.9.%' OR local_ip LIKE '10.20.98.%'             OR lower(hostname) LIKE 'lon%' OR lower(hostname) LIKE 'meeting%'             OR lower(hostname) LIKE 'cicd%')      THEN 'Office'      ELSE 'Other'    END AS category  FROM base) SELECT count(*) AS v FROM classified WHERE ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND COALESCE(cloud_provider,'none') IN (${cloud:singlequote}) AND COALESCE(cloud_account,'none') IN (${cloud_account:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND COALESCE(os_version,'UNKNOWN') IN (${os:singlequote}) AND ('${extip}' = '' OR external_ip ILIKE '%${extip}%')",
+          "refId": "A"
         }
-      ],
-      "schemaVersion": 39,
-      "tags": [
-        "falcon",
-        "crowdstrike"
-      ],
-      "templating": {
-        "list": [
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Office hosts",
+      "datasource": {
+        "type": "postgres",
+        "uid": "falcon-postgres"
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "fixed"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH base AS (  SELECT h.aid, h.hostname, h.local_ip, h.external_ip, h.platform_name, h.os_version,         h.product_type_desc, h.agent_version, h.reduced_functionality_mode, h.cs_last_seen,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,         a.raw->>'cloud_account_id'  AS cloud_account,         COALESCE(vc.open_total, 0)    AS open_total,         COALESCE(vc.open_critical, 0) AS open_critical  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE  LEFT JOIN (SELECT aid, count(*) FILTER (WHERE status='open') AS open_total,             count(*) FILTER (WHERE status='open' AND severity='CRITICAL') AS open_critical             FROM falcon.vulns GROUP BY aid) vc ON vc.aid = h.aid),classified AS (  SELECT *,    CASE      WHEN cloud_provider = 'AWS' THEN 'AWS'      WHEN external_ip LIKE '92.207.176.2%'        AND (local_ip LIKE '10.20.7.%' OR local_ip LIKE '10.20.9.%' OR local_ip LIKE '10.20.98.%'             OR lower(hostname) LIKE 'lon%' OR lower(hostname) LIKE 'meeting%'             OR lower(hostname) LIKE 'cicd%')      THEN 'Office'      ELSE 'Other'    END AS category  FROM base) SELECT count(*) FILTER (WHERE category='Office') AS v FROM classified WHERE ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND COALESCE(cloud_provider,'none') IN (${cloud:singlequote}) AND COALESCE(cloud_account,'none') IN (${cloud_account:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND COALESCE(os_version,'UNKNOWN') IN (${os:singlequote}) AND ('${extip}' = '' OR external_ip ILIKE '%${extip}%')",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "AWS hosts",
+      "datasource": {
+        "type": "postgres",
+        "uid": "falcon-postgres"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "fixed"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH base AS (  SELECT h.aid, h.hostname, h.local_ip, h.external_ip, h.platform_name, h.os_version,         h.product_type_desc, h.agent_version, h.reduced_functionality_mode, h.cs_last_seen,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,         a.raw->>'cloud_account_id'  AS cloud_account,         COALESCE(vc.open_total, 0)    AS open_total,         COALESCE(vc.open_critical, 0) AS open_critical  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE  LEFT JOIN (SELECT aid, count(*) FILTER (WHERE status='open') AS open_total,             count(*) FILTER (WHERE status='open' AND severity='CRITICAL') AS open_critical             FROM falcon.vulns GROUP BY aid) vc ON vc.aid = h.aid),classified AS (  SELECT *,    CASE      WHEN cloud_provider = 'AWS' THEN 'AWS'      WHEN external_ip LIKE '92.207.176.2%'        AND (local_ip LIKE '10.20.7.%' OR local_ip LIKE '10.20.9.%' OR local_ip LIKE '10.20.98.%'             OR lower(hostname) LIKE 'lon%' OR lower(hostname) LIKE 'meeting%'             OR lower(hostname) LIKE 'cicd%')      THEN 'Office'      ELSE 'Other'    END AS category  FROM base) SELECT count(*) FILTER (WHERE category='AWS') AS v FROM classified WHERE ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND COALESCE(cloud_provider,'none') IN (${cloud:singlequote}) AND COALESCE(cloud_account,'none') IN (${cloud_account:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND COALESCE(os_version,'UNKNOWN') IN (${os:singlequote}) AND ('${extip}' = '' OR external_ip ILIKE '%${extip}%')",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Other / unclassified",
+      "datasource": {
+        "type": "postgres",
+        "uid": "falcon-postgres"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "fixed"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH base AS (  SELECT h.aid, h.hostname, h.local_ip, h.external_ip, h.platform_name, h.os_version,         h.product_type_desc, h.agent_version, h.reduced_functionality_mode, h.cs_last_seen,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,         a.raw->>'cloud_account_id'  AS cloud_account,         COALESCE(vc.open_total, 0)    AS open_total,         COALESCE(vc.open_critical, 0) AS open_critical  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE  LEFT JOIN (SELECT aid, count(*) FILTER (WHERE status='open') AS open_total,             count(*) FILTER (WHERE status='open' AND severity='CRITICAL') AS open_critical             FROM falcon.vulns GROUP BY aid) vc ON vc.aid = h.aid),classified AS (  SELECT *,    CASE      WHEN cloud_provider = 'AWS' THEN 'AWS'      WHEN external_ip LIKE '92.207.176.2%'        AND (local_ip LIKE '10.20.7.%' OR local_ip LIKE '10.20.9.%' OR local_ip LIKE '10.20.98.%'             OR lower(hostname) LIKE 'lon%' OR lower(hostname) LIKE 'meeting%'             OR lower(hostname) LIKE 'cicd%')      THEN 'Office'      ELSE 'Other'    END AS category  FROM base) SELECT count(*) FILTER (WHERE category='Other') AS v FROM classified WHERE ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND COALESCE(cloud_provider,'none') IN (${cloud:singlequote}) AND COALESCE(cloud_account,'none') IN (${cloud_account:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND COALESCE(os_version,'UNKNOWN') IN (${os:singlequote}) AND ('${extip}' = '' OR external_ip ILIKE '%${extip}%')",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "piechart",
+      "title": "Hosts by category",
+      "datasource": {
+        "type": "postgres",
+        "uid": "falcon-postgres"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 8,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {}
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "pieType": "donut",
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value"
+          ]
+        },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH base AS (  SELECT h.aid, h.hostname, h.local_ip, h.external_ip, h.platform_name, h.os_version,         h.product_type_desc, h.agent_version, h.reduced_functionality_mode, h.cs_last_seen,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,         a.raw->>'cloud_account_id'  AS cloud_account,         COALESCE(vc.open_total, 0)    AS open_total,         COALESCE(vc.open_critical, 0) AS open_critical  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE  LEFT JOIN (SELECT aid, count(*) FILTER (WHERE status='open') AS open_total,             count(*) FILTER (WHERE status='open' AND severity='CRITICAL') AS open_critical             FROM falcon.vulns GROUP BY aid) vc ON vc.aid = h.aid),classified AS (  SELECT *,    CASE      WHEN cloud_provider = 'AWS' THEN 'AWS'      WHEN external_ip LIKE '92.207.176.2%'        AND (local_ip LIKE '10.20.7.%' OR local_ip LIKE '10.20.9.%' OR local_ip LIKE '10.20.98.%'             OR lower(hostname) LIKE 'lon%' OR lower(hostname) LIKE 'meeting%'             OR lower(hostname) LIKE 'cicd%')      THEN 'Office'      ELSE 'Other'    END AS category  FROM base) SELECT category AS metric, count(*) AS value FROM classified WHERE ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND COALESCE(cloud_provider,'none') IN (${cloud:singlequote}) AND COALESCE(cloud_account,'none') IN (${cloud_account:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND COALESCE(os_version,'UNKNOWN') IN (${os:singlequote}) AND ('${extip}' = '' OR external_ip ILIKE '%${extip}%') GROUP BY category ORDER BY 2 DESC",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "piechart",
+      "title": "Hosts by platform",
+      "datasource": {
+        "type": "postgres",
+        "uid": "falcon-postgres"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 4,
+        "w": 8,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {}
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "pieType": "donut",
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value"
+          ]
+        },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH base AS (  SELECT h.aid, h.hostname, h.local_ip, h.external_ip, h.platform_name, h.os_version,         h.product_type_desc, h.agent_version, h.reduced_functionality_mode, h.cs_last_seen,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,         a.raw->>'cloud_account_id'  AS cloud_account,         COALESCE(vc.open_total, 0)    AS open_total,         COALESCE(vc.open_critical, 0) AS open_critical  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE  LEFT JOIN (SELECT aid, count(*) FILTER (WHERE status='open') AS open_total,             count(*) FILTER (WHERE status='open' AND severity='CRITICAL') AS open_critical             FROM falcon.vulns GROUP BY aid) vc ON vc.aid = h.aid),classified AS (  SELECT *,    CASE      WHEN cloud_provider = 'AWS' THEN 'AWS'      WHEN external_ip LIKE '92.207.176.2%'        AND (local_ip LIKE '10.20.7.%' OR local_ip LIKE '10.20.9.%' OR local_ip LIKE '10.20.98.%'             OR lower(hostname) LIKE 'lon%' OR lower(hostname) LIKE 'meeting%'             OR lower(hostname) LIKE 'cicd%')      THEN 'Office'      ELSE 'Other'    END AS category  FROM base) SELECT platform_name AS metric, count(*) AS value FROM classified WHERE ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND COALESCE(cloud_provider,'none') IN (${cloud:singlequote}) AND COALESCE(cloud_account,'none') IN (${cloud_account:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND COALESCE(os_version,'UNKNOWN') IN (${os:singlequote}) AND ('${extip}' = '' OR external_ip ILIKE '%${extip}%') GROUP BY platform_name ORDER BY 2 DESC",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "piechart",
+      "title": "Open criticals by category",
+      "datasource": {
+        "type": "postgres",
+        "uid": "falcon-postgres"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 4,
+        "w": 8,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {}
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "pieType": "donut",
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value"
+          ]
+        },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH base AS (  SELECT h.aid, h.hostname, h.local_ip, h.external_ip, h.platform_name, h.os_version,         h.product_type_desc, h.agent_version, h.reduced_functionality_mode, h.cs_last_seen,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,         a.raw->>'cloud_account_id'  AS cloud_account,         COALESCE(vc.open_total, 0)    AS open_total,         COALESCE(vc.open_critical, 0) AS open_critical  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE  LEFT JOIN (SELECT aid, count(*) FILTER (WHERE status='open') AS open_total,             count(*) FILTER (WHERE status='open' AND severity='CRITICAL') AS open_critical             FROM falcon.vulns GROUP BY aid) vc ON vc.aid = h.aid),classified AS (  SELECT *,    CASE      WHEN cloud_provider = 'AWS' THEN 'AWS'      WHEN external_ip LIKE '92.207.176.2%'        AND (local_ip LIKE '10.20.7.%' OR local_ip LIKE '10.20.9.%' OR local_ip LIKE '10.20.98.%'             OR lower(hostname) LIKE 'lon%' OR lower(hostname) LIKE 'meeting%'             OR lower(hostname) LIKE 'cicd%')      THEN 'Office'      ELSE 'Other'    END AS category  FROM base) SELECT category AS metric, sum(open_critical) AS value FROM classified WHERE ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND COALESCE(cloud_provider,'none') IN (${cloud:singlequote}) AND COALESCE(cloud_account,'none') IN (${cloud_account:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND COALESCE(os_version,'UNKNOWN') IN (${os:singlequote}) AND ('${extip}' = '' OR external_ip ILIKE '%${extip}%') GROUP BY category ORDER BY 2 DESC",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Hosts",
+      "datasource": {
+        "type": "postgres",
+        "uid": "falcon-postgres"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 24,
+        "h": 14
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "filterable": true,
+            "align": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "footer": {
+          "show": false
+        },
+        "cellHeight": "sm"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH base AS (  SELECT h.aid, h.hostname, h.local_ip, h.external_ip, h.platform_name, h.os_version,         h.product_type_desc, h.agent_version, h.reduced_functionality_mode, h.cs_last_seen,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,         a.raw->>'cloud_account_id'  AS cloud_account,         COALESCE(vc.open_total, 0)    AS open_total,         COALESCE(vc.open_critical, 0) AS open_critical  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE  LEFT JOIN (SELECT aid, count(*) FILTER (WHERE status='open') AS open_total,             count(*) FILTER (WHERE status='open' AND severity='CRITICAL') AS open_critical             FROM falcon.vulns GROUP BY aid) vc ON vc.aid = h.aid),classified AS (  SELECT *,    CASE      WHEN cloud_provider = 'AWS' THEN 'AWS'      WHEN external_ip LIKE '92.207.176.2%'        AND (local_ip LIKE '10.20.7.%' OR local_ip LIKE '10.20.9.%' OR local_ip LIKE '10.20.98.%'             OR lower(hostname) LIKE 'lon%' OR lower(hostname) LIKE 'meeting%'             OR lower(hostname) LIKE 'cicd%')      THEN 'Office'      ELSE 'Other'    END AS category  FROM base) SELECT category, hostname, instance_id, cloud_provider AS cloud, cloud_account, external_ip, local_ip, platform_name AS platform, os_version, agent_version, reduced_functionality_mode AS rfm, cs_last_seen AS last_seen, open_total, open_critical FROM classified WHERE ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND COALESCE(cloud_provider,'none') IN (${cloud:singlequote}) AND COALESCE(cloud_account,'none') IN (${cloud_account:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND COALESCE(os_version,'UNKNOWN') IN (${os:singlequote}) AND ('${extip}' = '' OR external_ip ILIKE '%${extip}%') AND category IN (${category:singlequote}) ORDER BY open_critical DESC, category, hostname",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [
+    "falcon",
+    "crowdstrike"
+  ],
+  "templating": {
+    "list": [
+      {
+        "type": "custom",
+        "name": "category",
+        "label": "Category",
+        "query": "Office : Office,AWS : AWS,Other : Other",
+        "multi": true,
+        "includeAll": true,
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "options": [
           {
-            "type": "query",
-            "name": "platform",
-            "label": "Platform",
-            "datasource": {
-              "type": "postgres",
-              "uid": "falcon-postgres"
-            },
-            "query": "SELECT DISTINCT platform_name FROM falcon.hosts WHERE platform_name IS NOT NULL ORDER BY 1",
-            "refresh": 2,
-            "multi": true,
-            "includeAll": true,
-            "allValue": null,
-            "definition": "SELECT DISTINCT platform_name FROM falcon.hosts WHERE platform_name IS NOT NULL ORDER BY 1",
-            "options": [],
-            "current": {
-              "selected": true,
-              "text": [
-                "All"
-              ],
-              "value": [
-                "$__all"
-              ]
-            },
-            "sort": 1
+            "text": "All",
+            "value": "$__all",
+            "selected": true
           },
           {
-            "type": "textbox",
-            "name": "host",
-            "label": "Hostname contains",
-            "query": "",
-            "current": {
-              "text": "",
-              "value": ""
-            },
-            "options": [
-              {
-                "text": "",
-                "value": "",
-                "selected": true
-              }
-            ]
+            "text": "Office",
+            "value": "Office",
+            "selected": false
+          },
+          {
+            "text": "AWS",
+            "value": "AWS",
+            "selected": false
+          },
+          {
+            "text": "Other",
+            "value": "Other",
+            "selected": false
           }
         ]
       },
-      "time": {
-        "from": "now-90d",
-        "to": "now"
+      {
+        "type": "query",
+        "name": "cloud",
+        "label": "Cloud",
+        "datasource": {
+          "type": "postgres",
+          "uid": "falcon-postgres"
+        },
+        "query": "SELECT DISTINCT COALESCE(raw->>'cloud_provider','none') FROM falcon.assets ORDER BY 1",
+        "refresh": 2,
+        "multi": true,
+        "includeAll": true,
+        "allValue": null,
+        "definition": "SELECT DISTINCT COALESCE(raw->>'cloud_provider','none') FROM falcon.assets ORDER BY 1",
+        "options": [],
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "sort": 1
       },
-      "timepicker": {},
-      "timezone": "",
-      "title": "Falcon \u2014 Hosts",
-      "uid": "falcon-hosts",
-      "version": 1,
-      "weekStart": ""
-    }
+      {
+        "type": "query",
+        "name": "cloud_account",
+        "label": "Cloud account",
+        "datasource": {
+          "type": "postgres",
+          "uid": "falcon-postgres"
+        },
+        "query": "SELECT DISTINCT COALESCE(raw->>'cloud_account_id','none') FROM falcon.assets ORDER BY 1",
+        "refresh": 2,
+        "multi": true,
+        "includeAll": true,
+        "allValue": null,
+        "definition": "SELECT DISTINCT COALESCE(raw->>'cloud_account_id','none') FROM falcon.assets ORDER BY 1",
+        "options": [],
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "sort": 1
+      },
+      {
+        "type": "query",
+        "name": "platform",
+        "label": "Platform",
+        "datasource": {
+          "type": "postgres",
+          "uid": "falcon-postgres"
+        },
+        "query": "SELECT DISTINCT COALESCE(platform_name,'UNKNOWN') FROM falcon.hosts ORDER BY 1",
+        "refresh": 2,
+        "multi": true,
+        "includeAll": true,
+        "allValue": null,
+        "definition": "SELECT DISTINCT COALESCE(platform_name,'UNKNOWN') FROM falcon.hosts ORDER BY 1",
+        "options": [],
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "sort": 1
+      },
+      {
+        "type": "query",
+        "name": "os",
+        "label": "OS version",
+        "datasource": {
+          "type": "postgres",
+          "uid": "falcon-postgres"
+        },
+        "query": "SELECT DISTINCT COALESCE(os_version,'UNKNOWN') FROM falcon.hosts ORDER BY 1",
+        "refresh": 2,
+        "multi": true,
+        "includeAll": true,
+        "allValue": null,
+        "definition": "SELECT DISTINCT COALESCE(os_version,'UNKNOWN') FROM falcon.hosts ORDER BY 1",
+        "options": [],
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "sort": 1
+      },
+      {
+        "type": "textbox",
+        "name": "extip",
+        "label": "External IP contains",
+        "query": "",
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "options": [
+          {
+            "text": "",
+            "value": "",
+            "selected": true
+          }
+        ]
+      },
+      {
+        "type": "textbox",
+        "name": "host",
+        "label": "Hostname / instance id contains",
+        "query": "",
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "options": [
+          {
+            "text": "",
+            "value": "",
+            "selected": true
+          }
+        ]
+      }
+    ]
+  },
+  "time": {
+    "from": "now-90d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Falcon \u2014 Hosts",
+  "uid": "falcon-hosts",
+  "version": 1,
+  "weekStart": ""
+}
