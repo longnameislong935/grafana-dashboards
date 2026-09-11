@@ -230,42 +230,102 @@
           "custom": {
             "hideFrom": {}
           },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "CRITICAL": {
-                  "color": "#7A1516",
-                  "index": 0
-                },
-                "HIGH": {
-                  "color": "#C4162A",
-                  "index": 1
-                },
-                "MEDIUM": {
-                  "color": "#E0902E",
-                  "index": 2
-                },
-                "LOW": {
-                  "color": "#3274D9",
-                  "index": 3
-                },
-                "NONE": {
-                  "color": "#5B6370",
-                  "index": 4
-                },
-                "UNKNOWN": {
-                  "color": "#5B6370",
-                  "index": 5
-                }
-              }
-            }
-          ],
           "color": {
-            "mode": "fixed"
+            "mode": "palette-classic"
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CRITICAL"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#7A1516"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "HIGH"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#C4162A"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "MEDIUM"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#E0902E"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "LOW"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3274D9"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "NONE"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#5B6370"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "UNKNOWN"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#5B6370"
+                }
+              }
+            ]
+          }
+        ]
       },
       "options": {
         "pieType": "donut",
@@ -316,6 +376,9 @@
         "defaults": {
           "custom": {
             "hideFrom": {}
+          },
+          "color": {
+            "mode": "palette-classic"
           }
         },
         "overrides": []
@@ -369,6 +432,9 @@
         "defaults": {
           "custom": {
             "hideFrom": {}
+          },
+          "color": {
+            "mode": "palette-classic"
           }
         },
         "overrides": []
@@ -407,7 +473,7 @@
     },
     {
       "type": "timeseries",
-      "title": "Open vulnerabilities trend (by severity)",
+      "title": "Open trend by severity",
       "datasource": {
         "type": "postgres",
         "uid": "falcon-postgres"
@@ -415,7 +481,7 @@
       "gridPos": {
         "x": 0,
         "y": 13,
-        "w": 24,
+        "w": 12,
         "h": 8
       },
       "fieldConfig": {
@@ -429,39 +495,154 @@
             "lineWidth": 1,
             "showPoints": "auto"
           },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "CRITICAL": {
-                  "color": "#7A1516",
-                  "index": 0
-                },
-                "HIGH": {
-                  "color": "#C4162A",
-                  "index": 1
-                },
-                "MEDIUM": {
-                  "color": "#E0902E",
-                  "index": 2
-                },
-                "LOW": {
-                  "color": "#3274D9",
-                  "index": 3
-                },
-                "NONE": {
-                  "color": "#5B6370",
-                  "index": 4
-                },
-                "UNKNOWN": {
-                  "color": "#5B6370",
-                  "index": 5
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CRITICAL"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#7A1516"
                 }
               }
-            }
-          ],
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "HIGH"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#C4162A"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "MEDIUM"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#E0902E"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "LOW"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3274D9"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "NONE"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#5B6370"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "UNKNOWN"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#5B6370"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "last"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT snapshot_date AS time, severity AS metric, sum(open_count)::float AS value FROM falcon.v_vuln_trend WHERE severity IN (${severity:singlequote}) AND platform IN (${platform:singlequote}) GROUP BY snapshot_date, severity ORDER BY snapshot_date",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Open trend by category (Office vs AWS burn-down)",
+      "datasource": {
+        "type": "postgres",
+        "uid": "falcon-postgres"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 13,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "stacking": {
+              "mode": "normal"
+            },
+            "lineWidth": 1,
+            "showPoints": "auto"
+          },
           "color": {
-            "mode": "fixed"
+            "mode": "palette-classic"
           }
         },
         "overrides": []
@@ -486,7 +667,7 @@
           },
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT snapshot_date AS time, severity AS metric, sum(open_count)::float AS value FROM falcon.v_vuln_trend WHERE severity IN (${severity:singlequote}) AND platform IN (${platform:singlequote}) GROUP BY snapshot_date, severity ORDER BY snapshot_date",
+          "rawSql": "SELECT snapshot_date AS time, category AS metric, sum(open_count)::float AS value FROM falcon.v_vuln_category_trend WHERE severity IN (${severity:singlequote}) AND category IN (${category:singlequote}) GROUP BY snapshot_date, category ORDER BY snapshot_date",
           "refId": "A"
         }
       ]
