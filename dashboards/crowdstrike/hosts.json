@@ -602,7 +602,7 @@
     },
     {
       "type": "table",
-      "title": "Biggest movers vs 7 days ago",
+      "title": "Biggest movers vs 7 days ago (fixable vs no-fix)",
       "datasource": {
         "type": "postgres",
         "uid": "falcon-postgres"
@@ -637,7 +637,7 @@
           },
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT hostname, category, open_total AS open_now, open_total_7d_ago AS open_7d_ago, delta_7d, open_critical FROM falcon.v_host_movers WHERE ('${host}' = '' OR hostname ILIKE '%${host}%') AND category IN (${category:singlequote}) ORDER BY delta_7d DESC NULLS LAST, open_total DESC",
+          "rawSql": "SELECT hostname, category, open_total AS open_now, fixable, nofix_count AS no_fix, open_critical, open_total_7d_ago AS open_7d_ago, delta_7d FROM falcon.v_host_movers WHERE ('${host}' = '' OR hostname ILIKE '%${host}%') AND category IN (${category:singlequote}) ORDER BY delta_7d DESC NULLS LAST, open_total DESC",
           "refId": "A"
         }
       ]
