@@ -1,15 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_FALCON",
-      "label": "falcon-postgres",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "postgres",
-      "pluginName": "PostgreSQL"
-    }
-  ],
-  "__requires": [],
   "annotations": {
     "list": [
       {
@@ -36,7 +25,7 @@
       "title": "Open vulnerabilities",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_FALCON}"
+        "uid": "falcon-postgres"
       },
       "gridPos": {
         "x": 0,
@@ -70,7 +59,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_FALCON}"
+            "uid": "falcon-postgres"
           },
           "format": "table",
           "rawQuery": true,
@@ -84,7 +73,7 @@
       "title": "Critical (open)",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_FALCON}"
+        "uid": "falcon-postgres"
       },
       "gridPos": {
         "x": 6,
@@ -118,7 +107,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_FALCON}"
+            "uid": "falcon-postgres"
           },
           "format": "table",
           "rawQuery": true,
@@ -132,7 +121,7 @@
       "title": "CISA KEV (open)",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_FALCON}"
+        "uid": "falcon-postgres"
       },
       "gridPos": {
         "x": 12,
@@ -166,7 +155,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_FALCON}"
+            "uid": "falcon-postgres"
           },
           "format": "table",
           "rawQuery": true,
@@ -180,7 +169,7 @@
       "title": "Affected hosts",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_FALCON}"
+        "uid": "falcon-postgres"
       },
       "gridPos": {
         "x": 18,
@@ -214,7 +203,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_FALCON}"
+            "uid": "falcon-postgres"
           },
           "format": "table",
           "rawQuery": true,
@@ -228,7 +217,7 @@
       "title": "Open by severity",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_FALCON}"
+        "uid": "falcon-postgres"
       },
       "gridPos": {
         "x": 0,
@@ -301,7 +290,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_FALCON}"
+            "uid": "falcon-postgres"
           },
           "format": "table",
           "rawQuery": true,
@@ -315,7 +304,7 @@
       "title": "Open vulnerabilities trend (by severity)",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_FALCON}"
+        "uid": "falcon-postgres"
       },
       "gridPos": {
         "x": 8,
@@ -387,7 +376,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_FALCON}"
+            "uid": "falcon-postgres"
           },
           "format": "time_series",
           "rawQuery": true,
@@ -401,7 +390,7 @@
       "title": "Open vulnerabilities",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_FALCON}"
+        "uid": "falcon-postgres"
       },
       "gridPos": {
         "x": 0,
@@ -483,7 +472,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_FALCON}"
+            "uid": "falcon-postgres"
           },
           "format": "table",
           "rawQuery": true,
@@ -506,7 +495,7 @@
         "label": "Severity",
         "datasource": {
           "type": "postgres",
-          "uid": "${DS_FALCON}"
+          "uid": "falcon-postgres"
         },
         "query": "SELECT DISTINCT severity FROM falcon.v_open_vulns WHERE severity IS NOT NULL ORDER BY 1",
         "refresh": 2,
@@ -524,7 +513,7 @@
         "label": "Platform",
         "datasource": {
           "type": "postgres",
-          "uid": "${DS_FALCON}"
+          "uid": "falcon-postgres"
         },
         "query": "SELECT DISTINCT COALESCE(platform_name,'UNKNOWN') FROM falcon.v_open_vulns ORDER BY 1",
         "refresh": 2,
