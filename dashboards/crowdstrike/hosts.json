@@ -1,15 +1,3 @@
-apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaDashboard
-metadata:
-  name: falcon-hosts
-  namespace: y-tree-crowdstrike
-spec:
-  allowCrossNamespaceImport: true
-  instanceSelector:
-    matchLabels:
-      dashboards: grafana
-  resyncPeriod: 10m0s
-  json: |
     {
       "annotations": {
         "list": [
