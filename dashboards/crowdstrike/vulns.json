@@ -222,7 +222,7 @@
       "gridPos": {
         "x": 0,
         "y": 4,
-        "w": 8,
+        "w": 6,
         "h": 9
       },
       "fieldConfig": {
@@ -367,9 +367,9 @@
         "uid": "falcon-postgres"
       },
       "gridPos": {
-        "x": 8,
+        "x": 6,
         "y": 4,
-        "w": 8,
+        "w": 6,
         "h": 9
       },
       "fieldConfig": {
@@ -484,9 +484,9 @@
         "uid": "falcon-postgres"
       },
       "gridPos": {
-        "x": 16,
+        "x": 12,
         "y": 4,
-        "w": 8,
+        "w": 6,
         "h": 9
       },
       "fieldConfig": {
@@ -594,6 +594,62 @@
       ]
     },
     {
+      "type": "piechart",
+      "title": "Open by host (top 15)",
+      "datasource": {
+        "type": "postgres",
+        "uid": "falcon-postgres"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 4,
+        "w": 6,
+        "h": 9
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {}
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "pieType": "donut",
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value"
+          ]
+        },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH host_cat AS (  SELECT h.aid,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,    CASE      WHEN a.raw->>'cloud_provider' = 'AWS' THEN 'AWS'      WHEN h.external_ip LIKE '92.207.176.2%'        AND (h.local_ip LIKE '10.20.7.%' OR h.local_ip LIKE '10.20.9.%'             OR h.local_ip LIKE '10.20.98.%' OR lower(h.hostname) LIKE 'lon%'             OR lower(h.hostname) LIKE 'meeting%' OR lower(h.hostname) LIKE 'cicd%')      THEN 'Office' ELSE 'Other' END AS category  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE), ov AS (  SELECT v.*, COALESCE(hc.category,'Unknown') AS category,         hc.instance_id, hc.cloud_provider,    CASE WHEN vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0      THEN 'No fix available'      ELSE COALESCE(rem.titles, 'No fix available') END AS remediation,    (vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0     OR COALESCE(rem.titles,'') ILIKE '%no fix%') AS no_fix  FROM falcon.v_open_vulns v  LEFT JOIN host_cat hc ON hc.aid = v.aid  LEFT JOIN falcon.vulns vr ON vr.vuln_id = v.vuln_id  LEFT JOIN LATERAL (SELECT string_agg(DISTINCT r.title, '; ') AS titles    FROM falcon.remediations r WHERE r.remediation_id = ANY(vr.remediation_ids)) rem ON TRUE) SELECT CASE WHEN rn <= 15 THEN host ELSE 'Other' END AS metric, sum(c) AS value FROM (SELECT COALESCE(hostname,'(unknown)') AS host, count(*) AS c, row_number() OVER (ORDER BY count(*) DESC) AS rn FROM ov WHERE severity IN (${severity:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND category IN (${category:singlequote}) AND ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND ('${kev}' = 'all' OR is_cisa_kev::text = '${kev}') AND ('${nofix}' = 'all' OR no_fix::text = '${nofix}') GROUP BY 1) t GROUP BY 1 ORDER BY 2 DESC",
+          "refId": "A"
+        }
+      ]
+    },
+    {
       "type": "timeseries",
       "title": "Open trend by severity",
       "datasource": {
@@ -603,7 +659,7 @@
       "gridPos": {
         "x": 0,
         "y": 13,
-        "w": 12,
+        "w": 8,
         "h": 8
       },
       "fieldConfig": {
@@ -742,15 +798,15 @@
     },
     {
       "type": "timeseries",
-      "title": "Open trend by category (Office vs AWS burn-down)",
+      "title": "Open trend by category (Office vs AWS)",
       "datasource": {
         "type": "postgres",
         "uid": "falcon-postgres"
       },
       "gridPos": {
-        "x": 12,
+        "x": 8,
         "y": 13,
-        "w": 12,
+        "w": 8,
         "h": 8
       },
       "fieldConfig": {
@@ -853,6 +909,123 @@
           "format": "time_series",
           "rawQuery": true,
           "rawSql": "SELECT snapshot_date AS time, sum(open_count) FILTER (WHERE category='Office') AS \"Office\", sum(open_count) FILTER (WHERE category='AWS') AS \"AWS\", sum(open_count) FILTER (WHERE category='Other') AS \"Other\", sum(open_count) FILTER (WHERE category='Unknown') AS \"Unknown\" FROM falcon.v_vuln_category_trend WHERE severity IN (${severity:singlequote}) GROUP BY snapshot_date ORDER BY snapshot_date",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "No-fix open trend by category",
+      "datasource": {
+        "type": "postgres",
+        "uid": "falcon-postgres"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 13,
+        "w": 8,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "stacking": {
+              "mode": "normal"
+            },
+            "lineWidth": 1,
+            "showPoints": "always",
+            "pointSize": 6
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Office"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3274D9"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AWS"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#E0902E"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Other"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#5B6370"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Unknown"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#B877D9"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "last"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT snapshot_date AS time, sum(nofix_count) FILTER (WHERE category='Office') AS \"Office\", sum(nofix_count) FILTER (WHERE category='AWS') AS \"AWS\", sum(nofix_count) FILTER (WHERE category='Other') AS \"Other\", sum(nofix_count) FILTER (WHERE category='Unknown') AS \"Unknown\" FROM falcon.v_vuln_category_trend WHERE severity IN (${severity:singlequote}) GROUP BY snapshot_date ORDER BY snapshot_date",
           "refId": "A"
         }
       ]
