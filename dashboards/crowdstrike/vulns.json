@@ -651,7 +651,7 @@
     },
     {
       "type": "timeseries",
-      "title": "Open trend by severity",
+      "title": "Open trend by severity  (respects Severity + Category)",
       "datasource": {
         "type": "postgres",
         "uid": "falcon-postgres"
@@ -791,7 +791,7 @@
           },
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT snapshot_date AS time, sum(open_count) FILTER (WHERE severity='CRITICAL') AS \"CRITICAL\", sum(open_count) FILTER (WHERE severity='HIGH') AS \"HIGH\", sum(open_count) FILTER (WHERE severity='MEDIUM') AS \"MEDIUM\", sum(open_count) FILTER (WHERE severity='LOW') AS \"LOW\" FROM falcon.vuln_daily_counts WHERE platform IN (${platform:singlequote}) AND category IN (${category:singlequote}) GROUP BY snapshot_date ORDER BY snapshot_date",
+          "rawSql": "SELECT snapshot_date AS time, severity AS metric, sum(open_count)::float AS value FROM falcon.vuln_daily_counts WHERE severity IN (${severity:singlequote}) AND category IN (${category:singlequote}) AND platform IN (${platform:singlequote}) GROUP BY snapshot_date, severity ORDER BY snapshot_date",
           "refId": "A"
         }
       ]
