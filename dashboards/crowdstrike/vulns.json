@@ -1,0 +1,1665 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: falcon-vulns
+  namespace: y-tree-crowdstrike
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  resyncPeriod: 10m0s
+  json: |
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": {
+              "type": "grafana",
+              "uid": "-- Grafana --"
+            },
+            "enable": true,
+            "hide": true,
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
+      },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 0,
+      "links": [],
+      "liveNow": false,
+      "panels": [
+        {
+          "type": "stat",
+          "title": "Open vulnerabilities",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 0,
+            "w": 4,
+            "h": 4
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": {
+                "mode": "fixed"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "auto",
+            "justifyMode": "auto"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH host_cat AS (  SELECT h.aid,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,    CASE      WHEN a.raw->>'cloud_provider' = 'AWS' THEN 'AWS'      WHEN h.external_ip LIKE '92.207.176.2%'        AND (h.local_ip LIKE '10.20.7.%' OR h.local_ip LIKE '10.20.9.%'             OR h.local_ip LIKE '10.20.98.%' OR lower(h.hostname) LIKE 'lon%'             OR lower(h.hostname) LIKE 'meeting%' OR lower(h.hostname) LIKE 'cicd%')      THEN 'Office' ELSE 'Other' END AS category  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE), ov AS (  SELECT v.*, COALESCE(hc.category,'Unknown') AS category,         hc.instance_id, hc.cloud_provider,    CASE WHEN vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0      THEN 'No fix available'      ELSE COALESCE(rem.titles, 'No fix available') END AS remediation,    (vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0     OR COALESCE(rem.titles,'') ILIKE '%no fix%') AS no_fix  FROM falcon.v_open_vulns v  LEFT JOIN host_cat hc ON hc.aid = v.aid  LEFT JOIN falcon.vulns vr ON vr.vuln_id = v.vuln_id  LEFT JOIN LATERAL (SELECT string_agg(DISTINCT r.title, '; ') AS titles    FROM falcon.remediations r WHERE r.remediation_id = ANY(vr.remediation_ids)) rem ON TRUE) SELECT count(*) AS v FROM ov WHERE severity IN (${severity:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND category IN (${category:singlequote}) AND ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND ('${kev}' = 'all' OR is_cisa_kev::text = '${kev}') AND ('${nofix}' = 'all' OR no_fix::text = '${nofix}')",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Critical (open)",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 4,
+            "y": 0,
+            "w": 4,
+            "h": 4
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": {
+                "mode": "fixed"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "auto",
+            "justifyMode": "auto"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH host_cat AS (  SELECT h.aid,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,    CASE      WHEN a.raw->>'cloud_provider' = 'AWS' THEN 'AWS'      WHEN h.external_ip LIKE '92.207.176.2%'        AND (h.local_ip LIKE '10.20.7.%' OR h.local_ip LIKE '10.20.9.%'             OR h.local_ip LIKE '10.20.98.%' OR lower(h.hostname) LIKE 'lon%'             OR lower(h.hostname) LIKE 'meeting%' OR lower(h.hostname) LIKE 'cicd%')      THEN 'Office' ELSE 'Other' END AS category  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE), ov AS (  SELECT v.*, COALESCE(hc.category,'Unknown') AS category,         hc.instance_id, hc.cloud_provider,    CASE WHEN vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0      THEN 'No fix available'      ELSE COALESCE(rem.titles, 'No fix available') END AS remediation,    (vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0     OR COALESCE(rem.titles,'') ILIKE '%no fix%') AS no_fix  FROM falcon.v_open_vulns v  LEFT JOIN host_cat hc ON hc.aid = v.aid  LEFT JOIN falcon.vulns vr ON vr.vuln_id = v.vuln_id  LEFT JOIN LATERAL (SELECT string_agg(DISTINCT r.title, '; ') AS titles    FROM falcon.remediations r WHERE r.remediation_id = ANY(vr.remediation_ids)) rem ON TRUE) SELECT count(*) FILTER (WHERE severity='CRITICAL') AS v FROM ov WHERE severity IN (${severity:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND category IN (${category:singlequote}) AND ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND ('${kev}' = 'all' OR is_cisa_kev::text = '${kev}') AND ('${nofix}' = 'all' OR no_fix::text = '${nofix}')",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "CISA KEV (open)",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 8,
+            "y": 0,
+            "w": 4,
+            "h": 4
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": {
+                "mode": "fixed"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "auto",
+            "justifyMode": "auto"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH host_cat AS (  SELECT h.aid,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,    CASE      WHEN a.raw->>'cloud_provider' = 'AWS' THEN 'AWS'      WHEN h.external_ip LIKE '92.207.176.2%'        AND (h.local_ip LIKE '10.20.7.%' OR h.local_ip LIKE '10.20.9.%'             OR h.local_ip LIKE '10.20.98.%' OR lower(h.hostname) LIKE 'lon%'             OR lower(h.hostname) LIKE 'meeting%' OR lower(h.hostname) LIKE 'cicd%')      THEN 'Office' ELSE 'Other' END AS category  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE), ov AS (  SELECT v.*, COALESCE(hc.category,'Unknown') AS category,         hc.instance_id, hc.cloud_provider,    CASE WHEN vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0      THEN 'No fix available'      ELSE COALESCE(rem.titles, 'No fix available') END AS remediation,    (vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0     OR COALESCE(rem.titles,'') ILIKE '%no fix%') AS no_fix  FROM falcon.v_open_vulns v  LEFT JOIN host_cat hc ON hc.aid = v.aid  LEFT JOIN falcon.vulns vr ON vr.vuln_id = v.vuln_id  LEFT JOIN LATERAL (SELECT string_agg(DISTINCT r.title, '; ') AS titles    FROM falcon.remediations r WHERE r.remediation_id = ANY(vr.remediation_ids)) rem ON TRUE) SELECT count(*) FILTER (WHERE is_cisa_kev) AS v FROM ov WHERE severity IN (${severity:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND category IN (${category:singlequote}) AND ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND ('${kev}' = 'all' OR is_cisa_kev::text = '${kev}') AND ('${nofix}' = 'all' OR no_fix::text = '${nofix}')",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Affected hosts",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 0,
+            "w": 4,
+            "h": 4
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": {
+                "mode": "fixed"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "auto",
+            "justifyMode": "auto"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH host_cat AS (  SELECT h.aid,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,    CASE      WHEN a.raw->>'cloud_provider' = 'AWS' THEN 'AWS'      WHEN h.external_ip LIKE '92.207.176.2%'        AND (h.local_ip LIKE '10.20.7.%' OR h.local_ip LIKE '10.20.9.%'             OR h.local_ip LIKE '10.20.98.%' OR lower(h.hostname) LIKE 'lon%'             OR lower(h.hostname) LIKE 'meeting%' OR lower(h.hostname) LIKE 'cicd%')      THEN 'Office' ELSE 'Other' END AS category  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE), ov AS (  SELECT v.*, COALESCE(hc.category,'Unknown') AS category,         hc.instance_id, hc.cloud_provider,    CASE WHEN vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0      THEN 'No fix available'      ELSE COALESCE(rem.titles, 'No fix available') END AS remediation,    (vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0     OR COALESCE(rem.titles,'') ILIKE '%no fix%') AS no_fix  FROM falcon.v_open_vulns v  LEFT JOIN host_cat hc ON hc.aid = v.aid  LEFT JOIN falcon.vulns vr ON vr.vuln_id = v.vuln_id  LEFT JOIN LATERAL (SELECT string_agg(DISTINCT r.title, '; ') AS titles    FROM falcon.remediations r WHERE r.remediation_id = ANY(vr.remediation_ids)) rem ON TRUE) SELECT count(DISTINCT aid) AS v FROM ov WHERE severity IN (${severity:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND category IN (${category:singlequote}) AND ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND ('${kev}' = 'all' OR is_cisa_kev::text = '${kev}') AND ('${nofix}' = 'all' OR no_fix::text = '${nofix}')",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "Fixable (open)",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 16,
+            "y": 0,
+            "w": 4,
+            "h": 4
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": {
+                "mode": "fixed"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "auto",
+            "justifyMode": "auto"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH host_cat AS (  SELECT h.aid,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,    CASE      WHEN a.raw->>'cloud_provider' = 'AWS' THEN 'AWS'      WHEN h.external_ip LIKE '92.207.176.2%'        AND (h.local_ip LIKE '10.20.7.%' OR h.local_ip LIKE '10.20.9.%'             OR h.local_ip LIKE '10.20.98.%' OR lower(h.hostname) LIKE 'lon%'             OR lower(h.hostname) LIKE 'meeting%' OR lower(h.hostname) LIKE 'cicd%')      THEN 'Office' ELSE 'Other' END AS category  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE), ov AS (  SELECT v.*, COALESCE(hc.category,'Unknown') AS category,         hc.instance_id, hc.cloud_provider,    CASE WHEN vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0      THEN 'No fix available'      ELSE COALESCE(rem.titles, 'No fix available') END AS remediation,    (vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0     OR COALESCE(rem.titles,'') ILIKE '%no fix%') AS no_fix  FROM falcon.v_open_vulns v  LEFT JOIN host_cat hc ON hc.aid = v.aid  LEFT JOIN falcon.vulns vr ON vr.vuln_id = v.vuln_id  LEFT JOIN LATERAL (SELECT string_agg(DISTINCT r.title, '; ') AS titles    FROM falcon.remediations r WHERE r.remediation_id = ANY(vr.remediation_ids)) rem ON TRUE) SELECT count(*) FILTER (WHERE NOT no_fix) AS v FROM ov WHERE severity IN (${severity:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND category IN (${category:singlequote}) AND ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND ('${kev}' = 'all' OR is_cisa_kev::text = '${kev}') AND ('${nofix}' = 'all' OR no_fix::text = '${nofix}')",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "stat",
+          "title": "No-fix (open)",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 20,
+            "y": 0,
+            "w": 4,
+            "h": 4
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": {
+                "mode": "fixed"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "colorMode": "value",
+            "graphMode": "none",
+            "textMode": "auto",
+            "justifyMode": "auto"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH host_cat AS (  SELECT h.aid,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,    CASE      WHEN a.raw->>'cloud_provider' = 'AWS' THEN 'AWS'      WHEN h.external_ip LIKE '92.207.176.2%'        AND (h.local_ip LIKE '10.20.7.%' OR h.local_ip LIKE '10.20.9.%'             OR h.local_ip LIKE '10.20.98.%' OR lower(h.hostname) LIKE 'lon%'             OR lower(h.hostname) LIKE 'meeting%' OR lower(h.hostname) LIKE 'cicd%')      THEN 'Office' ELSE 'Other' END AS category  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE), ov AS (  SELECT v.*, COALESCE(hc.category,'Unknown') AS category,         hc.instance_id, hc.cloud_provider,    CASE WHEN vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0      THEN 'No fix available'      ELSE COALESCE(rem.titles, 'No fix available') END AS remediation,    (vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0     OR COALESCE(rem.titles,'') ILIKE '%no fix%') AS no_fix  FROM falcon.v_open_vulns v  LEFT JOIN host_cat hc ON hc.aid = v.aid  LEFT JOIN falcon.vulns vr ON vr.vuln_id = v.vuln_id  LEFT JOIN LATERAL (SELECT string_agg(DISTINCT r.title, '; ') AS titles    FROM falcon.remediations r WHERE r.remediation_id = ANY(vr.remediation_ids)) rem ON TRUE) SELECT count(*) FILTER (WHERE no_fix) AS v FROM ov WHERE severity IN (${severity:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND category IN (${category:singlequote}) AND ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND ('${kev}' = 'all' OR is_cisa_kev::text = '${kev}') AND ('${nofix}' = 'all' OR no_fix::text = '${nofix}')",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "piechart",
+          "title": "Open by severity",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 4,
+            "w": 6,
+            "h": 9
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "hideFrom": {}
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "CRITICAL"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#7A1516"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "HIGH"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#C4162A"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "MEDIUM"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#E0902E"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "LOW"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3274D9"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "NONE"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#5B6370"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "UNKNOWN"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#5B6370"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "pieType": "donut",
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "values": [
+                "value"
+              ]
+            },
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "values": true
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH host_cat AS (  SELECT h.aid,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,    CASE      WHEN a.raw->>'cloud_provider' = 'AWS' THEN 'AWS'      WHEN h.external_ip LIKE '92.207.176.2%'        AND (h.local_ip LIKE '10.20.7.%' OR h.local_ip LIKE '10.20.9.%'             OR h.local_ip LIKE '10.20.98.%' OR lower(h.hostname) LIKE 'lon%'             OR lower(h.hostname) LIKE 'meeting%' OR lower(h.hostname) LIKE 'cicd%')      THEN 'Office' ELSE 'Other' END AS category  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE), ov AS (  SELECT v.*, COALESCE(hc.category,'Unknown') AS category,         hc.instance_id, hc.cloud_provider,    CASE WHEN vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0      THEN 'No fix available'      ELSE COALESCE(rem.titles, 'No fix available') END AS remediation,    (vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0     OR COALESCE(rem.titles,'') ILIKE '%no fix%') AS no_fix  FROM falcon.v_open_vulns v  LEFT JOIN host_cat hc ON hc.aid = v.aid  LEFT JOIN falcon.vulns vr ON vr.vuln_id = v.vuln_id  LEFT JOIN LATERAL (SELECT string_agg(DISTINCT r.title, '; ') AS titles    FROM falcon.remediations r WHERE r.remediation_id = ANY(vr.remediation_ids)) rem ON TRUE) SELECT count(*) FILTER (WHERE severity='CRITICAL') AS \"CRITICAL\", count(*) FILTER (WHERE severity='HIGH') AS \"HIGH\", count(*) FILTER (WHERE severity='MEDIUM') AS \"MEDIUM\", count(*) FILTER (WHERE severity='LOW') AS \"LOW\" FROM ov WHERE severity IN (${severity:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND category IN (${category:singlequote}) AND ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND ('${kev}' = 'all' OR is_cisa_kev::text = '${kev}') AND ('${nofix}' = 'all' OR no_fix::text = '${nofix}')",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "piechart",
+          "title": "Open by category",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 6,
+            "y": 4,
+            "w": 6,
+            "h": 9
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "hideFrom": {}
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Office"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3274D9"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "AWS"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#E0902E"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Other"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#5B6370"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Unknown"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B877D9"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "pieType": "donut",
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "values": [
+                "value"
+              ]
+            },
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "values": true
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH host_cat AS (  SELECT h.aid,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,    CASE      WHEN a.raw->>'cloud_provider' = 'AWS' THEN 'AWS'      WHEN h.external_ip LIKE '92.207.176.2%'        AND (h.local_ip LIKE '10.20.7.%' OR h.local_ip LIKE '10.20.9.%'             OR h.local_ip LIKE '10.20.98.%' OR lower(h.hostname) LIKE 'lon%'             OR lower(h.hostname) LIKE 'meeting%' OR lower(h.hostname) LIKE 'cicd%')      THEN 'Office' ELSE 'Other' END AS category  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE), ov AS (  SELECT v.*, COALESCE(hc.category,'Unknown') AS category,         hc.instance_id, hc.cloud_provider,    CASE WHEN vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0      THEN 'No fix available'      ELSE COALESCE(rem.titles, 'No fix available') END AS remediation,    (vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0     OR COALESCE(rem.titles,'') ILIKE '%no fix%') AS no_fix  FROM falcon.v_open_vulns v  LEFT JOIN host_cat hc ON hc.aid = v.aid  LEFT JOIN falcon.vulns vr ON vr.vuln_id = v.vuln_id  LEFT JOIN LATERAL (SELECT string_agg(DISTINCT r.title, '; ') AS titles    FROM falcon.remediations r WHERE r.remediation_id = ANY(vr.remediation_ids)) rem ON TRUE) SELECT count(*) FILTER (WHERE category='Office') AS \"Office\", count(*) FILTER (WHERE category='AWS') AS \"AWS\", count(*) FILTER (WHERE category='Other') AS \"Other\", count(*) FILTER (WHERE category='Unknown') AS \"Unknown\" FROM ov WHERE severity IN (${severity:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND category IN (${category:singlequote}) AND ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND ('${kev}' = 'all' OR is_cisa_kev::text = '${kev}') AND ('${nofix}' = 'all' OR no_fix::text = '${nofix}')",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "piechart",
+          "title": "Open criticals by category",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 4,
+            "w": 6,
+            "h": 9
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "hideFrom": {}
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Office"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3274D9"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "AWS"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#E0902E"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Other"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#5B6370"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Unknown"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B877D9"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "pieType": "donut",
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "values": [
+                "value"
+              ]
+            },
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "values": true
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH host_cat AS (  SELECT h.aid,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,    CASE      WHEN a.raw->>'cloud_provider' = 'AWS' THEN 'AWS'      WHEN h.external_ip LIKE '92.207.176.2%'        AND (h.local_ip LIKE '10.20.7.%' OR h.local_ip LIKE '10.20.9.%'             OR h.local_ip LIKE '10.20.98.%' OR lower(h.hostname) LIKE 'lon%'             OR lower(h.hostname) LIKE 'meeting%' OR lower(h.hostname) LIKE 'cicd%')      THEN 'Office' ELSE 'Other' END AS category  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE), ov AS (  SELECT v.*, COALESCE(hc.category,'Unknown') AS category,         hc.instance_id, hc.cloud_provider,    CASE WHEN vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0      THEN 'No fix available'      ELSE COALESCE(rem.titles, 'No fix available') END AS remediation,    (vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0     OR COALESCE(rem.titles,'') ILIKE '%no fix%') AS no_fix  FROM falcon.v_open_vulns v  LEFT JOIN host_cat hc ON hc.aid = v.aid  LEFT JOIN falcon.vulns vr ON vr.vuln_id = v.vuln_id  LEFT JOIN LATERAL (SELECT string_agg(DISTINCT r.title, '; ') AS titles    FROM falcon.remediations r WHERE r.remediation_id = ANY(vr.remediation_ids)) rem ON TRUE) SELECT count(*) FILTER (WHERE category='Office') AS \"Office\", count(*) FILTER (WHERE category='AWS') AS \"AWS\", count(*) FILTER (WHERE category='Other') AS \"Other\", count(*) FILTER (WHERE category='Unknown') AS \"Unknown\" FROM ov WHERE severity IN (${severity:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND category IN (${category:singlequote}) AND ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND ('${kev}' = 'all' OR is_cisa_kev::text = '${kev}') AND ('${nofix}' = 'all' OR no_fix::text = '${nofix}') AND severity='CRITICAL'",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "piechart",
+          "title": "Open by host (top 15)",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 18,
+            "y": 4,
+            "w": 6,
+            "h": 9
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "hideFrom": {}
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "pieType": "donut",
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "values": [
+                "value"
+              ]
+            },
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "values": true
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH host_cat AS (  SELECT h.aid,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,    CASE      WHEN a.raw->>'cloud_provider' = 'AWS' THEN 'AWS'      WHEN h.external_ip LIKE '92.207.176.2%'        AND (h.local_ip LIKE '10.20.7.%' OR h.local_ip LIKE '10.20.9.%'             OR h.local_ip LIKE '10.20.98.%' OR lower(h.hostname) LIKE 'lon%'             OR lower(h.hostname) LIKE 'meeting%' OR lower(h.hostname) LIKE 'cicd%')      THEN 'Office' ELSE 'Other' END AS category  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE), ov AS (  SELECT v.*, COALESCE(hc.category,'Unknown') AS category,         hc.instance_id, hc.cloud_provider,    CASE WHEN vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0      THEN 'No fix available'      ELSE COALESCE(rem.titles, 'No fix available') END AS remediation,    (vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0     OR COALESCE(rem.titles,'') ILIKE '%no fix%') AS no_fix  FROM falcon.v_open_vulns v  LEFT JOIN host_cat hc ON hc.aid = v.aid  LEFT JOIN falcon.vulns vr ON vr.vuln_id = v.vuln_id  LEFT JOIN LATERAL (SELECT string_agg(DISTINCT r.title, '; ') AS titles    FROM falcon.remediations r WHERE r.remediation_id = ANY(vr.remediation_ids)) rem ON TRUE) SELECT CASE WHEN rn <= 15 THEN host ELSE 'Other' END AS metric, sum(c) AS value FROM (SELECT COALESCE(hostname,'(unknown)') AS host, count(*) AS c, row_number() OVER (ORDER BY count(*) DESC) AS rn FROM ov WHERE severity IN (${severity:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND category IN (${category:singlequote}) AND ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND ('${kev}' = 'all' OR is_cisa_kev::text = '${kev}') AND ('${nofix}' = 'all' OR no_fix::text = '${nofix}') GROUP BY 1) t GROUP BY 1 ORDER BY 2 DESC",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Open trend by severity  (respects Severity + Category)",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 13,
+            "w": 8,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "drawStyle": "line",
+                "fillOpacity": 15,
+                "stacking": {
+                  "mode": "none"
+                },
+                "lineWidth": 2,
+                "showPoints": "always",
+                "pointSize": 6
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "CRITICAL"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#7A1516"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "HIGH"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#C4162A"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "MEDIUM"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#E0902E"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "LOW"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3274D9"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "NONE"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#5B6370"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "UNKNOWN"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#5B6370"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "bottom",
+              "calcs": [
+                "last"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "time_series",
+              "rawQuery": true,
+              "rawSql": "SELECT snapshot_date AS time, severity AS metric, sum(open_count)::float AS value FROM falcon.vuln_daily_counts WHERE severity IN (${severity:singlequote}) AND category IN (${category:singlequote}) AND platform IN (${platform:singlequote}) GROUP BY snapshot_date, severity ORDER BY snapshot_date",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Open trend by category (Office vs AWS)",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 8,
+            "y": 13,
+            "w": 8,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "drawStyle": "line",
+                "fillOpacity": 15,
+                "stacking": {
+                  "mode": "none"
+                },
+                "lineWidth": 2,
+                "showPoints": "always",
+                "pointSize": 6
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Office"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3274D9"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "AWS"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#E0902E"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Other"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#5B6370"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Unknown"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B877D9"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "bottom",
+              "calcs": [
+                "last"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "time_series",
+              "rawQuery": true,
+              "rawSql": "SELECT snapshot_date AS time, sum(open_count) FILTER (WHERE category='Office') AS \"Office\", sum(open_count) FILTER (WHERE category='AWS') AS \"AWS\", sum(open_count) FILTER (WHERE category='Other') AS \"Other\", sum(open_count) FILTER (WHERE category='Unknown') AS \"Unknown\" FROM falcon.vuln_daily_counts WHERE severity IN (${severity:singlequote}) AND platform IN (${platform:singlequote}) GROUP BY snapshot_date ORDER BY snapshot_date",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Critical open trend by category  (respects Category)",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 16,
+            "y": 13,
+            "w": 8,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "drawStyle": "line",
+                "fillOpacity": 15,
+                "stacking": {
+                  "mode": "none"
+                },
+                "lineWidth": 2,
+                "showPoints": "always",
+                "pointSize": 6
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Office"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3274D9"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "AWS"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#E0902E"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Other"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#5B6370"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Unknown"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B877D9"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "bottom",
+              "calcs": [
+                "last"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "time_series",
+              "rawQuery": true,
+              "rawSql": "SELECT snapshot_date AS time, sum(open_count) FILTER (WHERE category='Office') AS \"Office\", sum(open_count) FILTER (WHERE category='AWS') AS \"AWS\", sum(open_count) FILTER (WHERE category='Other') AS \"Other\", sum(open_count) FILTER (WHERE category='Unknown') AS \"Unknown\" FROM falcon.vuln_daily_counts WHERE severity = 'CRITICAL' AND platform IN (${platform:singlequote}) AND category IN (${category:singlequote}) GROUP BY snapshot_date ORDER BY snapshot_date",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Fixable open trend by category  (has a remediation)",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 21,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "drawStyle": "line",
+                "fillOpacity": 15,
+                "stacking": {
+                  "mode": "none"
+                },
+                "lineWidth": 2,
+                "showPoints": "always",
+                "pointSize": 6
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Office"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3274D9"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "AWS"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#E0902E"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Other"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#5B6370"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Unknown"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B877D9"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "bottom",
+              "calcs": [
+                "last"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "time_series",
+              "rawQuery": true,
+              "rawSql": "SELECT snapshot_date AS time, sum(open_count - nofix_count) FILTER (WHERE category='Office') AS \"Office\", sum(open_count - nofix_count) FILTER (WHERE category='AWS') AS \"AWS\", sum(open_count - nofix_count) FILTER (WHERE category='Other') AS \"Other\", sum(open_count - nofix_count) FILTER (WHERE category='Unknown') AS \"Unknown\" FROM falcon.vuln_daily_counts WHERE severity IN (${severity:singlequote}) AND platform IN (${platform:singlequote}) GROUP BY snapshot_date ORDER BY snapshot_date",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "No-fix open trend by category  (no remediation)",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 21,
+            "w": 12,
+            "h": 8
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "drawStyle": "line",
+                "fillOpacity": 15,
+                "stacking": {
+                  "mode": "none"
+                },
+                "lineWidth": 2,
+                "showPoints": "always",
+                "pointSize": 6
+              },
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Office"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#3274D9"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "AWS"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#E0902E"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Other"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#5B6370"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Unknown"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "#B877D9"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "bottom",
+              "calcs": [
+                "last"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "time_series",
+              "rawQuery": true,
+              "rawSql": "SELECT snapshot_date AS time, sum(nofix_count) FILTER (WHERE category='Office') AS \"Office\", sum(nofix_count) FILTER (WHERE category='AWS') AS \"AWS\", sum(nofix_count) FILTER (WHERE category='Other') AS \"Other\", sum(nofix_count) FILTER (WHERE category='Unknown') AS \"Unknown\" FROM falcon.vuln_daily_counts WHERE severity IN (${severity:singlequote}) AND platform IN (${platform:singlequote}) GROUP BY snapshot_date ORDER BY snapshot_date",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Open vulnerabilities",
+          "datasource": {
+            "type": "postgres",
+            "uid": "falcon-postgres"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 29,
+            "w": 24,
+            "h": 12
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "filterable": true,
+                "align": "auto"
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "severity"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "CRITICAL": {
+                            "color": "#7A1516",
+                            "index": 0
+                          },
+                          "HIGH": {
+                            "color": "#C4162A",
+                            "index": 1
+                          },
+                          "MEDIUM": {
+                            "color": "#E0902E",
+                            "index": 2
+                          },
+                          "LOW": {
+                            "color": "#3274D9",
+                            "index": 3
+                          },
+                          "NONE": {
+                            "color": "#5B6370",
+                            "index": 4
+                          },
+                          "UNKNOWN": {
+                            "color": "#5B6370",
+                            "index": 5
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background",
+                      "mode": "gradient"
+                    }
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 110
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "showHeader": true,
+            "footer": {
+              "show": false
+            },
+            "cellHeight": "sm"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "falcon-postgres"
+              },
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH host_cat AS (  SELECT h.aid,         a.raw->>'cloud_provider'    AS cloud_provider,         a.raw->>'cloud_instance_id' AS instance_id,    CASE      WHEN a.raw->>'cloud_provider' = 'AWS' THEN 'AWS'      WHEN h.external_ip LIKE '92.207.176.2%'        AND (h.local_ip LIKE '10.20.7.%' OR h.local_ip LIKE '10.20.9.%'             OR h.local_ip LIKE '10.20.98.%' OR lower(h.hostname) LIKE 'lon%'             OR lower(h.hostname) LIKE 'meeting%' OR lower(h.hostname) LIKE 'cicd%')      THEN 'Office' ELSE 'Other' END AS category  FROM falcon.hosts h  LEFT JOIN LATERAL (SELECT az.raw FROM falcon.assets az WHERE az.aid = h.aid    ORDER BY (az.entity_type='managed') DESC, az.last_seen_ts DESC NULLS LAST LIMIT 1) a ON TRUE), ov AS (  SELECT v.*, COALESCE(hc.category,'Unknown') AS category,         hc.instance_id, hc.cloud_provider,    CASE WHEN vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0      THEN 'No fix available'      ELSE COALESCE(rem.titles, 'No fix available') END AS remediation,    (vr.remediation_ids IS NULL OR cardinality(vr.remediation_ids) = 0     OR COALESCE(rem.titles,'') ILIKE '%no fix%') AS no_fix  FROM falcon.v_open_vulns v  LEFT JOIN host_cat hc ON hc.aid = v.aid  LEFT JOIN falcon.vulns vr ON vr.vuln_id = v.vuln_id  LEFT JOIN LATERAL (SELECT string_agg(DISTINCT r.title, '; ') AS titles    FROM falcon.remediations r WHERE r.remediation_id = ANY(vr.remediation_ids)) rem ON TRUE) SELECT cve_id, severity, exprt_rating, cvss_base_score AS cvss, is_cisa_kev AS kev, category, hostname, instance_id, cloud_provider AS cloud, platform_name AS platform, product_name, no_fix, remediation, last_seen FROM ov WHERE severity IN (${severity:singlequote}) AND COALESCE(platform_name,'UNKNOWN') IN (${platform:singlequote}) AND category IN (${category:singlequote}) AND ('${host}' = '' OR hostname ILIKE '%${host}%' OR instance_id ILIKE '%${host}%') AND ('${kev}' = 'all' OR is_cisa_kev::text = '${kev}') AND ('${nofix}' = 'all' OR no_fix::text = '${nofix}') ORDER BY (severity='CRITICAL') DESC, cvss_base_score DESC NULLS LAST, last_seen DESC LIMIT 5000",
+              "refId": "A"
+            }
+          ]
+        }
+      ],
+      "schemaVersion": 39,
+      "tags": [
+        "falcon",
+        "crowdstrike"
+      ],
+      "templating": {
+        "list": [
+          {
+            "type": "query",
+            "name": "severity",
+            "label": "Severity",
+            "datasource": {
+              "type": "postgres",
+              "uid": "falcon-postgres"
+            },
+            "query": "SELECT DISTINCT severity FROM falcon.v_open_vulns WHERE severity IS NOT NULL ORDER BY 1",
+            "refresh": 2,
+            "multi": true,
+            "includeAll": true,
+            "allValue": null,
+            "definition": "SELECT DISTINCT severity FROM falcon.v_open_vulns WHERE severity IS NOT NULL ORDER BY 1",
+            "options": [],
+            "current": {
+              "selected": true,
+              "text": [
+                "All"
+              ],
+              "value": [
+                "$__all"
+              ]
+            },
+            "sort": 1
+          },
+          {
+            "type": "custom",
+            "name": "category",
+            "label": "Category",
+            "query": "Office : Office,AWS : AWS,Other : Other,Unknown : Unknown",
+            "multi": true,
+            "includeAll": true,
+            "allValue": null,
+            "current": {
+              "selected": true,
+              "text": [
+                "All"
+              ],
+              "value": [
+                "$__all"
+              ]
+            },
+            "options": [
+              {
+                "text": "All",
+                "value": "$__all",
+                "selected": true
+              },
+              {
+                "text": "Office",
+                "value": "Office",
+                "selected": false
+              },
+              {
+                "text": "AWS",
+                "value": "AWS",
+                "selected": false
+              },
+              {
+                "text": "Other",
+                "value": "Other",
+                "selected": false
+              },
+              {
+                "text": "Unknown",
+                "value": "Unknown",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "type": "query",
+            "name": "platform",
+            "label": "Platform",
+            "datasource": {
+              "type": "postgres",
+              "uid": "falcon-postgres"
+            },
+            "query": "SELECT DISTINCT COALESCE(platform_name,'UNKNOWN') FROM falcon.v_open_vulns ORDER BY 1",
+            "refresh": 2,
+            "multi": true,
+            "includeAll": true,
+            "allValue": null,
+            "definition": "SELECT DISTINCT COALESCE(platform_name,'UNKNOWN') FROM falcon.v_open_vulns ORDER BY 1",
+            "options": [],
+            "current": {
+              "selected": true,
+              "text": [
+                "All"
+              ],
+              "value": [
+                "$__all"
+              ]
+            },
+            "sort": 1
+          },
+          {
+            "type": "custom",
+            "name": "kev",
+            "label": "CISA KEV",
+            "query": "All : all,KEV only : true,Non-KEV : false",
+            "multi": false,
+            "includeAll": false,
+            "current": {
+              "text": "All",
+              "value": "all",
+              "selected": true
+            },
+            "options": [
+              {
+                "text": "All",
+                "value": "all",
+                "selected": true
+              },
+              {
+                "text": "KEV only",
+                "value": "true",
+                "selected": false
+              },
+              {
+                "text": "Non-KEV",
+                "value": "false",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "type": "custom",
+            "name": "nofix",
+            "label": "No fix",
+            "query": "All : all,No fix only : true,Has fix : false",
+            "multi": false,
+            "includeAll": false,
+            "current": {
+              "text": "All",
+              "value": "all",
+              "selected": true
+            },
+            "options": [
+              {
+                "text": "All",
+                "value": "all",
+                "selected": true
+              },
+              {
+                "text": "No fix only",
+                "value": "true",
+                "selected": false
+              },
+              {
+                "text": "Has fix",
+                "value": "false",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "type": "textbox",
+            "name": "host",
+            "label": "Hostname / instance id contains",
+            "query": "",
+            "current": {
+              "text": "",
+              "value": ""
+            },
+            "options": [
+              {
+                "text": "",
+                "value": "",
+                "selected": true
+              }
+            ]
+          }
+        ]
+      },
+      "time": {
+        "from": "now-90d",
+        "to": "now"
+      },
+      "timepicker": {},
+      "timezone": "",
+      "title": "Falcon \u2014 Vulnerabilities",
+      "uid": "falcon-vulns",
+      "version": 1,
+      "weekStart": ""
+    }
