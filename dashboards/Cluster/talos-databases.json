@@ -17,26 +17,10 @@
   "templating": {
     "list": [
       {
-        "name": "datasource",
-        "type": "datasource",
-        "label": "Data source",
-        "query": "victoriametrics-metrics-datasource",
-        "hide": 0,
-        "refresh": 1,
-        "regex": "",
-        "current": {
-          "text": "victoria-metrics",
-          "value": "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"
-        }
-      },
-      {
         "name": "namespace",
         "type": "query",
         "label": "Namespace",
-        "datasource": {
-          "type": "victoriametrics-metrics-datasource",
-          "uid": "${datasource}"
-        },
+        "datasource": "victoria-metrics",
         "query": {
           "query": "label_values(kube_pod_info, namespace)",
           "refId": "namespace"
@@ -100,10 +84,7 @@
     {
       "type": "timeseries",
       "title": "Connections by pod",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 129,
       "description": "",
       "gridPos": {
@@ -145,10 +126,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (pod)(cnpg_backends_total{namespace=~\"$namespace\"})",
           "legendFormat": "{{pod}}",
           "refId": "A",
@@ -160,10 +138,7 @@
     {
       "type": "timeseries",
       "title": "Database size",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 130,
       "description": "",
       "gridPos": {
@@ -202,10 +177,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "topk(10, cnpg_pg_database_size_bytes{namespace=~\"$namespace\"})",
           "legendFormat": "{{namespace}}/{{datname}}",
           "refId": "A",
@@ -217,10 +189,7 @@
     {
       "type": "timeseries",
       "title": "Replication lag",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 131,
       "description": "Streaming replica lag.",
       "gridPos": {
@@ -259,10 +228,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "cnpg_pg_replication_lag{namespace=~\"$namespace\"}",
           "legendFormat": "{{pod}}",
           "refId": "A",
@@ -274,10 +240,7 @@
     {
       "type": "timeseries",
       "title": "Cache hit ratio",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 132,
       "description": "",
       "gridPos": {
@@ -317,10 +280,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (pod)(rate(cnpg_cache_hits{namespace=~\"$namespace\"}[5m])) / clamp_min(sum by (pod)(rate(cnpg_cache_hits{namespace=~\"$namespace\"}[5m]) + rate(cnpg_cache_miss{namespace=~\"$namespace\"}[5m])),1)",
           "legendFormat": "{{pod}}",
           "refId": "A",
@@ -332,10 +292,7 @@
     {
       "type": "timeseries",
       "title": "WAL bytes/s",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 133,
       "description": "",
       "gridPos": {
@@ -374,10 +331,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (pod)(rate(cnpg_collector_wal_bytes{namespace=~\"$namespace\"}[5m]))",
           "legendFormat": "{{pod}}",
           "refId": "A",
@@ -389,10 +343,7 @@
     {
       "type": "table",
       "title": "Last successful backup age",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 134,
       "description": "Seconds since last available backup.",
       "gridPos": {
@@ -438,10 +389,7 @@
       ],
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "(time() - cnpg_collector_last_available_backup_timestamp{namespace=~\"$namespace\"}) > 0",
           "legendFormat": "",
           "refId": "A",
@@ -467,10 +415,7 @@
     {
       "type": "stat",
       "title": "Galera cluster size",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 136,
       "gridPos": {
         "h": 4,
@@ -513,10 +458,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "max(mysql_global_status_wsrep_cluster_size)",
           "legendFormat": "",
           "refId": "A",
@@ -528,10 +470,7 @@
     {
       "type": "stat",
       "title": "wsrep ready",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 137,
       "gridPos": {
         "h": 4,
@@ -578,10 +517,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "min(mysql_global_status_wsrep_ready)",
           "legendFormat": "",
           "refId": "A",
@@ -593,10 +529,7 @@
     {
       "type": "stat",
       "title": "Local state (4=Synced)",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 138,
       "gridPos": {
         "h": 4,
@@ -643,10 +576,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "min(mysql_global_status_wsrep_local_state)",
           "legendFormat": "",
           "refId": "A",
@@ -658,10 +588,7 @@
     {
       "type": "stat",
       "title": "MySQL up",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 139,
       "gridPos": {
         "h": 4,
@@ -704,10 +631,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(mysql_up)",
           "legendFormat": "",
           "refId": "A",
@@ -719,10 +643,7 @@
     {
       "type": "stat",
       "title": "Connections",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 140,
       "gridPos": {
         "h": 4,
@@ -758,10 +679,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(mysql_global_status_threads_connected)",
           "legendFormat": "",
           "refId": "A",
@@ -773,10 +691,7 @@
     {
       "type": "stat",
       "title": "Max connections",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 141,
       "gridPos": {
         "h": 4,
@@ -812,10 +727,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "max(mysql_global_variables_max_connections)",
           "legendFormat": "",
           "refId": "A",
@@ -827,10 +739,7 @@
     {
       "type": "timeseries",
       "title": "Queries/s (QPS)",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 142,
       "description": "",
       "gridPos": {
@@ -869,10 +778,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (pod)(rate(mysql_global_status_queries[5m]))",
           "legendFormat": "{{pod}}",
           "refId": "A",
@@ -884,10 +790,7 @@
     {
       "type": "timeseries",
       "title": "Threads connected vs max",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 143,
       "description": "",
       "gridPos": {
@@ -926,10 +829,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(mysql_global_status_threads_connected)",
           "legendFormat": "connected",
           "refId": "A",
@@ -937,10 +837,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "max(mysql_global_variables_max_connections)",
           "legendFormat": "max",
           "refId": "B",
@@ -952,10 +849,7 @@
     {
       "type": "timeseries",
       "title": "Network in/out",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 144,
       "description": "",
       "gridPos": {
@@ -994,10 +888,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(mysql_global_status_bytes_received[5m]))",
           "legendFormat": "received",
           "refId": "A",
@@ -1005,10 +896,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(mysql_global_status_bytes_sent[5m]))",
           "legendFormat": "sent",
           "refId": "B",
@@ -1033,10 +921,7 @@
     {
       "type": "timeseries",
       "title": "Frontend / backend sessions",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 146,
       "description": "",
       "gridPos": {
@@ -1075,10 +960,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(haproxy_frontend_current_sessions)",
           "legendFormat": "frontend",
           "refId": "A",
@@ -1086,10 +968,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(haproxy_backend_current_sessions)",
           "legendFormat": "backend",
           "refId": "B",
@@ -1101,10 +980,7 @@
     {
       "type": "timeseries",
       "title": "HTTP responses by code",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 147,
       "description": "",
       "gridPos": {
@@ -1143,10 +1019,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (code)(rate(haproxy_frontend_http_responses_total[5m]))",
           "legendFormat": "{{code}}",
           "refId": "A",
@@ -1158,10 +1031,7 @@
     {
       "type": "timeseries",
       "title": "Backend errors/s",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 148,
       "description": "",
       "gridPos": {
@@ -1200,10 +1070,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(haproxy_backend_response_errors_total[5m]))",
           "legendFormat": "response errors",
           "refId": "A",
@@ -1211,10 +1078,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(haproxy_backend_connection_errors_total[5m]))",
           "legendFormat": "connection errors",
           "refId": "B",

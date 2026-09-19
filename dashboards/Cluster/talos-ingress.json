@@ -15,21 +15,7 @@
     "to": "now"
   },
   "templating": {
-    "list": [
-      {
-        "name": "datasource",
-        "type": "datasource",
-        "label": "Data source",
-        "query": "victoriametrics-metrics-datasource",
-        "hide": 0,
-        "refresh": 1,
-        "regex": "",
-        "current": {
-          "text": "victoria-metrics",
-          "value": "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"
-        }
-      }
-    ]
+    "list": []
   },
   "links": [
     {
@@ -77,10 +63,7 @@
     {
       "type": "stat",
       "title": "Total req/s",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 103,
       "gridPos": {
         "h": 4,
@@ -116,10 +99,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(traefik_entrypoint_requests_total[5m]))",
           "legendFormat": "",
           "refId": "A",
@@ -131,10 +111,7 @@
     {
       "type": "stat",
       "title": "4xx/s",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 104,
       "gridPos": {
         "h": 4,
@@ -182,10 +159,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(traefik_entrypoint_requests_total{code=~\"4..\"}[5m]))",
           "legendFormat": "",
           "refId": "A",
@@ -197,10 +171,7 @@
     {
       "type": "stat",
       "title": "5xx/s",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 105,
       "gridPos": {
         "h": 4,
@@ -248,10 +219,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(traefik_entrypoint_requests_total{code=~\"5..\"}[5m]))",
           "legendFormat": "",
           "refId": "A",
@@ -263,10 +231,7 @@
     {
       "type": "stat",
       "title": "Open connections",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 106,
       "gridPos": {
         "h": 4,
@@ -302,10 +267,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(traefik_entrypoint_open_connections)",
           "legendFormat": "",
           "refId": "A",
@@ -317,10 +279,7 @@
     {
       "type": "stat",
       "title": "Config reloads (last ok)",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 107,
       "gridPos": {
         "h": 4,
@@ -355,10 +314,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "max(traefik_config_last_reload_success)",
           "legendFormat": "",
           "refId": "A",
@@ -383,10 +339,7 @@
     {
       "type": "timeseries",
       "title": "Request rate by entrypoint",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 109,
       "description": "",
       "gridPos": {
@@ -428,10 +381,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (entrypoint)(rate(traefik_entrypoint_requests_total[5m]))",
           "legendFormat": "{{entrypoint}}",
           "refId": "A",
@@ -443,10 +393,7 @@
     {
       "type": "timeseries",
       "title": "Responses by status class",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 110,
       "description": "",
       "gridPos": {
@@ -489,10 +436,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(traefik_entrypoint_requests_total{code=~\"2..\"}[5m]))",
           "legendFormat": "2xx",
           "refId": "A",
@@ -500,10 +444,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(traefik_entrypoint_requests_total{code=~\"3..\"}[5m]))",
           "legendFormat": "3xx",
           "refId": "B",
@@ -511,10 +452,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(traefik_entrypoint_requests_total{code=~\"4..\"}[5m]))",
           "legendFormat": "4xx",
           "refId": "C",
@@ -522,10 +460,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(traefik_entrypoint_requests_total{code=~\"5..\"}[5m]))",
           "legendFormat": "5xx",
           "refId": "D",
@@ -550,10 +485,7 @@
     {
       "type": "timeseries",
       "title": "Entrypoint latency p99",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 112,
       "description": "",
       "gridPos": {
@@ -592,10 +524,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "histogram_quantile(0.99, sum by (le,entrypoint)(rate(traefik_entrypoint_request_duration_seconds_bucket[5m])))",
           "legendFormat": "{{entrypoint}}",
           "refId": "A",
@@ -607,10 +536,7 @@
     {
       "type": "timeseries",
       "title": "Per-service request rate (top 10)",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 113,
       "description": "Backend services behind Traefik.",
       "gridPos": {
@@ -652,10 +578,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "topk(10, sum by (service)(rate(traefik_service_requests_total[5m])))",
           "legendFormat": "{{service}}",
           "refId": "A",

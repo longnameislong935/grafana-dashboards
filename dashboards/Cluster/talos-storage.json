@@ -17,26 +17,10 @@
   "templating": {
     "list": [
       {
-        "name": "datasource",
-        "type": "datasource",
-        "label": "Data source",
-        "query": "victoriametrics-metrics-datasource",
-        "hide": 0,
-        "refresh": 1,
-        "regex": "",
-        "current": {
-          "text": "victoria-metrics",
-          "value": "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"
-        }
-      },
-      {
         "name": "node",
         "type": "query",
         "label": "Node",
-        "datasource": {
-          "type": "victoriametrics-metrics-datasource",
-          "uid": "${datasource}"
-        },
+        "datasource": "victoria-metrics",
         "query": {
           "query": "label_values(node_memory_MemTotal_bytes, instance)",
           "refId": "node"
@@ -100,10 +84,7 @@
     {
       "type": "timeseries",
       "title": "Filesystem used % by mount",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 115,
       "description": "",
       "gridPos": {
@@ -143,10 +124,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "100 * (1 - node_filesystem_avail_bytes{instance=~\"$node\",fstype!~\"tmpfs|ramfs|overlay\"} / node_filesystem_size_bytes{instance=~\"$node\",fstype!~\"tmpfs|ramfs|overlay\"})",
           "legendFormat": "{{instance}} {{mountpoint}}",
           "refId": "A",
@@ -158,10 +136,7 @@
     {
       "type": "timeseries",
       "title": "Inodes used % by mount",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 116,
       "description": "",
       "gridPos": {
@@ -201,10 +176,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "100 * (1 - node_filesystem_files_free{instance=~\"$node\",fstype!~\"tmpfs|ramfs|overlay\"} / node_filesystem_files{instance=~\"$node\",fstype!~\"tmpfs|ramfs|overlay\"})",
           "legendFormat": "{{instance}} {{mountpoint}}",
           "refId": "A",
@@ -229,10 +201,7 @@
     {
       "type": "timeseries",
       "title": "PVCs by phase",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 118,
       "description": "",
       "gridPos": {
@@ -275,10 +244,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (phase)(kube_persistentvolumeclaim_status_phase)",
           "legendFormat": "{{phase}}",
           "refId": "A",
@@ -290,10 +256,7 @@
     {
       "type": "timeseries",
       "title": "PVs by phase",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 119,
       "description": "",
       "gridPos": {
@@ -336,10 +299,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (phase)(kube_persistentvolume_status_phase)",
           "legendFormat": "{{phase}}",
           "refId": "A",
@@ -351,10 +311,7 @@
     {
       "type": "table",
       "title": "Requested storage by namespace",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 120,
       "description": "Live PVC usage isn't exposed (kubelet volume stats empty); this is requested size.",
       "gridPos": {
@@ -400,10 +357,7 @@
       ],
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (namespace)(kube_persistentvolumeclaim_resource_requests_storage_bytes)",
           "legendFormat": "",
           "refId": "A",
@@ -429,10 +383,7 @@
     {
       "type": "timeseries",
       "title": "Garage disk used % by node",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 122,
       "description": "",
       "gridPos": {
@@ -472,10 +423,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "100 * (1 - garage_local_disk_avail / clamp_min(garage_local_disk_total,1))",
           "legendFormat": "{{instance}}",
           "refId": "A",
@@ -487,10 +435,7 @@
     {
       "type": "timeseries",
       "title": "Garage disk available",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 123,
       "description": "",
       "gridPos": {
@@ -529,10 +474,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "garage_local_disk_avail",
           "legendFormat": "{{instance}}",
           "refId": "A",
@@ -557,10 +499,7 @@
     {
       "type": "timeseries",
       "title": "Disk temperature",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 125,
       "description": "",
       "gridPos": {
@@ -599,10 +538,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "truenas_exporter_node_hwmon_temp_celsius",
           "legendFormat": "{{chip}} {{sensor}}",
           "refId": "A",
@@ -614,10 +550,7 @@
     {
       "type": "timeseries",
       "title": "Disk read/write",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 126,
       "description": "",
       "gridPos": {
@@ -656,10 +589,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(truenas_exporter_node_disk_read_bytes_total[5m]))",
           "legendFormat": "read",
           "refId": "A",
@@ -667,10 +597,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(truenas_exporter_node_disk_written_bytes_total[5m]))",
           "legendFormat": "write",
           "refId": "B",
@@ -682,10 +609,7 @@
     {
       "type": "timeseries",
       "title": "NFS throughput",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 127,
       "description": "",
       "gridPos": {
@@ -724,10 +648,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "rate(truenas_exporter_node_nfsd_disk_bytes_read_total[5m])",
           "legendFormat": "read",
           "refId": "A",
@@ -735,10 +656,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "rate(truenas_exporter_node_nfsd_disk_bytes_written_total[5m])",
           "legendFormat": "write",
           "refId": "B",

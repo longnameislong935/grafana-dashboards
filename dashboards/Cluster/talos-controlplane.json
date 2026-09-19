@@ -15,21 +15,7 @@
     "to": "now"
   },
   "templating": {
-    "list": [
-      {
-        "name": "datasource",
-        "type": "datasource",
-        "label": "Data source",
-        "query": "victoriametrics-metrics-datasource",
-        "hide": 0,
-        "refresh": 1,
-        "regex": "",
-        "current": {
-          "text": "victoria-metrics",
-          "value": "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"
-        }
-      }
-    ]
+    "list": []
   },
   "links": [
     {
@@ -77,10 +63,7 @@
     {
       "type": "stat",
       "title": "API servers up",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 40,
       "gridPos": {
         "h": 4,
@@ -123,10 +106,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(up{job=\"kube-apiserver\"})",
           "legendFormat": "",
           "refId": "A",
@@ -138,10 +118,7 @@
     {
       "type": "stat",
       "title": "Scheduler up",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 41,
       "gridPos": {
         "h": 4,
@@ -184,10 +161,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(up{job=\"kube-scheduler\"})",
           "legendFormat": "",
           "refId": "A",
@@ -199,10 +173,7 @@
     {
       "type": "stat",
       "title": "Controller-mgr up",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 42,
       "gridPos": {
         "h": 4,
@@ -245,10 +216,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(up{job=\"kube-controller-manager\"})",
           "legendFormat": "",
           "refId": "A",
@@ -260,10 +228,7 @@
     {
       "type": "stat",
       "title": "etcd members",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 43,
       "gridPos": {
         "h": 4,
@@ -306,10 +271,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "count(up{job=\"etcd\"} == 1)",
           "legendFormat": "",
           "refId": "A",
@@ -321,10 +283,7 @@
     {
       "type": "stat",
       "title": "etcd has leader",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 44,
       "gridPos": {
         "h": 4,
@@ -371,10 +330,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "min(etcd_server_has_leader)",
           "legendFormat": "",
           "refId": "A",
@@ -386,10 +342,7 @@
     {
       "type": "stat",
       "title": "API 5xx %",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 45,
       "gridPos": {
         "h": 4,
@@ -441,10 +394,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "100 * sum(rate(apiserver_request_total{code=~\"5..\"}[5m])) / clamp_min(sum(rate(apiserver_request_total[5m])),1)",
           "legendFormat": "",
           "refId": "A",
@@ -469,10 +419,7 @@
     {
       "type": "timeseries",
       "title": "Request rate by verb",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 47,
       "description": "",
       "gridPos": {
@@ -514,10 +461,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (verb)(rate(apiserver_request_total[5m]))",
           "legendFormat": "{{verb}}",
           "refId": "A",
@@ -529,10 +473,7 @@
     {
       "type": "timeseries",
       "title": "Request rate by resource (top 10)",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 48,
       "description": "",
       "gridPos": {
@@ -574,10 +515,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "topk(10, sum by (resource)(rate(apiserver_request_total[5m])))",
           "legendFormat": "{{resource}}",
           "refId": "A",
@@ -589,10 +527,7 @@
     {
       "type": "timeseries",
       "title": "Latency p99 (read verbs)",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 49,
       "description": "",
       "gridPos": {
@@ -631,10 +566,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "histogram_quantile(0.99, sum by (le)(rate(apiserver_request_duration_seconds_bucket{verb=~\"GET|LIST\"}[5m])))",
           "legendFormat": "p99",
           "refId": "A",
@@ -646,10 +578,7 @@
     {
       "type": "timeseries",
       "title": "Latency p99 (write verbs)",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 50,
       "description": "",
       "gridPos": {
@@ -688,10 +617,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "histogram_quantile(0.99, sum by (le)(rate(apiserver_request_duration_seconds_bucket{verb=~\"POST|PUT|PATCH|DELETE\"}[5m])))",
           "legendFormat": "p99",
           "refId": "A",
@@ -703,10 +629,7 @@
     {
       "type": "timeseries",
       "title": "Client\u2192API request rate by code",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 51,
       "description": "",
       "gridPos": {
@@ -745,10 +668,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (code)(rate(rest_client_requests_total[5m]))",
           "legendFormat": "{{code}}",
           "refId": "A",
@@ -773,10 +693,7 @@
     {
       "type": "timeseries",
       "title": "etcd DB size",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 53,
       "description": "",
       "gridPos": {
@@ -815,10 +732,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "etcd_mvcc_db_total_size_in_bytes",
           "legendFormat": "{{instance}}",
           "refId": "A",
@@ -830,10 +744,7 @@
     {
       "type": "timeseries",
       "title": "WAL fsync p99 / backend commit p99",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 54,
       "description": "Keep well under 100ms.",
       "gridPos": {
@@ -872,10 +783,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "histogram_quantile(0.99, sum by (le)(rate(etcd_disk_wal_fsync_duration_seconds_bucket[5m])))",
           "legendFormat": "wal fsync",
           "refId": "A",
@@ -883,10 +791,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "histogram_quantile(0.99, sum by (le)(rate(etcd_disk_backend_commit_duration_seconds_bucket[5m])))",
           "legendFormat": "backend commit",
           "refId": "B",
@@ -898,10 +803,7 @@
     {
       "type": "timeseries",
       "title": "Leader changes / proposal failures",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 55,
       "description": "",
       "gridPos": {
@@ -940,10 +842,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(etcd_server_leader_changes_seen_total[5m]))",
           "legendFormat": "leader changes/s",
           "refId": "A",
@@ -951,10 +850,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(etcd_server_proposals_failed_total[5m]))",
           "legendFormat": "proposal failures/s",
           "refId": "B",
@@ -979,10 +875,7 @@
     {
       "type": "timeseries",
       "title": "Workqueue depth (top 10)",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 57,
       "description": "",
       "gridPos": {
@@ -1021,10 +914,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "topk(10, workqueue_depth)",
           "legendFormat": "{{name}}",
           "refId": "A",
@@ -1036,10 +926,7 @@
     {
       "type": "timeseries",
       "title": "Workqueue add rate (top 10)",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 58,
       "description": "",
       "gridPos": {
@@ -1078,10 +965,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "topk(10, sum by (name)(rate(workqueue_adds_total[5m])))",
           "legendFormat": "{{name}}",
           "refId": "A",

@@ -17,26 +17,10 @@
   "templating": {
     "list": [
       {
-        "name": "datasource",
-        "type": "datasource",
-        "label": "Data source",
-        "query": "victoriametrics-metrics-datasource",
-        "hide": 0,
-        "refresh": 1,
-        "regex": "",
-        "current": {
-          "text": "victoria-metrics",
-          "value": "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"
-        }
-      },
-      {
         "name": "node",
         "type": "query",
         "label": "Node",
-        "datasource": {
-          "type": "victoriametrics-metrics-datasource",
-          "uid": "${datasource}"
-        },
+        "datasource": "victoria-metrics",
         "query": {
           "query": "label_values(node_memory_MemTotal_bytes, instance)",
           "refId": "node"
@@ -100,10 +84,7 @@
     {
       "type": "timeseries",
       "title": "CPU usage % by node",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 25,
       "description": "",
       "gridPos": {
@@ -146,10 +127,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "100 * (1 - avg by (instance)(rate(node_cpu_seconds_total{mode=\"idle\",instance=~\"$node\"}[5m])))",
           "legendFormat": "{{instance}}",
           "refId": "A",
@@ -161,10 +139,7 @@
     {
       "type": "timeseries",
       "title": "Memory usage % by node",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 26,
       "description": "",
       "gridPos": {
@@ -207,10 +182,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "100 * (1 - node_memory_MemAvailable_bytes{instance=~\"$node\"} / node_memory_MemTotal_bytes{instance=~\"$node\"})",
           "legendFormat": "{{instance}}",
           "refId": "A",
@@ -222,10 +194,7 @@
     {
       "type": "timeseries",
       "title": "Load1 per core",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 27,
       "description": "Normalised to cores; >1 = run-queue exceeds CPUs.",
       "gridPos": {
@@ -264,10 +233,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "node_load1{instance=~\"$node\"} / count by (instance)(node_cpu_seconds_total{mode=\"idle\",instance=~\"$node\"})",
           "legendFormat": "{{instance}}",
           "refId": "A",
@@ -279,10 +245,7 @@
     {
       "type": "timeseries",
       "title": "CPU by mode (cluster)",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 28,
       "description": "",
       "gridPos": {
@@ -325,10 +288,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (mode)(rate(node_cpu_seconds_total{mode!=\"idle\",instance=~\"$node\"}[5m]))",
           "legendFormat": "{{mode}}",
           "refId": "A",
@@ -340,10 +300,7 @@
     {
       "type": "timeseries",
       "title": "Memory available by node",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 29,
       "description": "",
       "gridPos": {
@@ -382,10 +339,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "node_memory_MemAvailable_bytes{instance=~\"$node\"}",
           "legendFormat": "{{instance}}",
           "refId": "A",
@@ -410,10 +364,7 @@
     {
       "type": "timeseries",
       "title": "Filesystem used % by mount",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 31,
       "description": "Pseudo filesystems filtered.",
       "gridPos": {
@@ -453,10 +404,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "100 * (1 - node_filesystem_avail_bytes{instance=~\"$node\",fstype!~\"tmpfs|ramfs|overlay\"} / node_filesystem_size_bytes{instance=~\"$node\",fstype!~\"tmpfs|ramfs|overlay\"})",
           "legendFormat": "{{instance}} {{mountpoint}}",
           "refId": "A",
@@ -468,10 +416,7 @@
     {
       "type": "timeseries",
       "title": "Disk I/O utilisation by node",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 32,
       "description": "Fraction of time disks were busy.",
       "gridPos": {
@@ -510,10 +455,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (instance)(rate(node_disk_io_time_seconds_total{instance=~\"$node\"}[5m]))",
           "legendFormat": "{{instance}}",
           "refId": "A",
@@ -525,10 +467,7 @@
     {
       "type": "timeseries",
       "title": "Network receive",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 33,
       "description": "",
       "gridPos": {
@@ -567,10 +506,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (instance)(rate(node_network_receive_bytes_total{instance=~\"$node\"}[5m]))",
           "legendFormat": "{{instance}}",
           "refId": "A",
@@ -582,10 +518,7 @@
     {
       "type": "timeseries",
       "title": "Network transmit",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 34,
       "description": "",
       "gridPos": {
@@ -624,10 +557,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (instance)(rate(node_network_transmit_bytes_total{instance=~\"$node\"}[5m]))",
           "legendFormat": "{{instance}}",
           "refId": "A",
@@ -639,10 +569,7 @@
     {
       "type": "timeseries",
       "title": "Conntrack entries",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 35,
       "description": "",
       "gridPos": {
@@ -681,10 +608,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "node_nf_conntrack_entries{instance=~\"$node\"}",
           "legendFormat": "{{instance}}",
           "refId": "A",
@@ -709,10 +633,7 @@
     {
       "type": "stat",
       "title": "Uptime (min node)",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 37,
       "gridPos": {
         "h": 4,
@@ -747,10 +668,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "min(time() - node_boot_time_seconds)",
           "legendFormat": "",
           "refId": "A",
@@ -762,10 +680,7 @@
     {
       "type": "table",
       "title": "Nodes",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 38,
       "description": "Kernel / OS per node.",
       "gridPos": {
@@ -811,10 +726,7 @@
       ],
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "node_uname_info{instance=~\"$node\"}",
           "legendFormat": "",
           "refId": "A",

@@ -16,44 +16,7 @@
     "to": "now"
   },
   "templating": {
-    "list": [
-      {
-        "name": "datasource",
-        "type": "datasource",
-        "label": "Data source",
-        "query": "victoriametrics-metrics-datasource",
-        "hide": 0,
-        "refresh": 1,
-        "regex": "",
-        "current": {
-          "text": "victoria-metrics",
-          "value": "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"
-        }
-      },
-      {
-        "name": "node",
-        "type": "query",
-        "label": "Node",
-        "datasource": {
-          "type": "victoriametrics-metrics-datasource",
-          "uid": "${datasource}"
-        },
-        "query": {
-          "query": "label_values(node_memory_MemTotal_bytes, instance)",
-          "refId": "node"
-        },
-        "definition": "label_values(node_memory_MemTotal_bytes, instance)",
-        "includeAll": true,
-        "multi": true,
-        "allValue": ".*",
-        "current": {
-          "text": "All",
-          "value": "$__all"
-        },
-        "refresh": 2,
-        "sort": 1
-      }
-    ]
+    "list": []
   },
   "links": [
     {
@@ -101,10 +64,7 @@
     {
       "type": "stat",
       "title": "Nodes Ready",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 2,
       "gridPos": {
         "h": 4,
@@ -147,10 +107,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(kube_node_status_condition{condition=\"Ready\",status=\"true\"})",
           "legendFormat": "",
           "refId": "A",
@@ -162,10 +119,7 @@
     {
       "type": "stat",
       "title": "Nodes",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 3,
       "gridPos": {
         "h": 4,
@@ -200,10 +154,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "count(kube_node_info)",
           "legendFormat": "",
           "refId": "A",
@@ -215,10 +166,7 @@
     {
       "type": "stat",
       "title": "Pods Running",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 4,
       "gridPos": {
         "h": 4,
@@ -261,10 +209,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(kube_pod_status_phase{phase=\"Running\"})",
           "legendFormat": "",
           "refId": "A",
@@ -276,10 +221,7 @@
     {
       "type": "stat",
       "title": "Pods Pending/Failed",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 5,
       "gridPos": {
         "h": 4,
@@ -326,10 +268,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(kube_pod_status_phase{phase=~\"Pending|Failed|Unknown\"})",
           "legendFormat": "",
           "refId": "A",
@@ -341,10 +280,7 @@
     {
       "type": "stat",
       "title": "API up",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 6,
       "gridPos": {
         "h": 4,
@@ -387,10 +323,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(up{job=\"kube-apiserver\"})",
           "legendFormat": "",
           "refId": "A",
@@ -402,10 +335,7 @@
     {
       "type": "stat",
       "title": "etcd leader",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 7,
       "gridPos": {
         "h": 4,
@@ -452,10 +382,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "min(etcd_server_has_leader)",
           "legendFormat": "",
           "refId": "A",
@@ -467,10 +394,7 @@
     {
       "type": "stat",
       "title": "CPU used",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 8,
       "gridPos": {
         "h": 4,
@@ -522,10 +446,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])))",
           "legendFormat": "",
           "refId": "A",
@@ -537,10 +458,7 @@
     {
       "type": "stat",
       "title": "Mem used",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 9,
       "gridPos": {
         "h": 4,
@@ -592,10 +510,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "100 * (1 - sum(node_memory_MemAvailable_bytes)/sum(node_memory_MemTotal_bytes))",
           "legendFormat": "",
           "refId": "A",
@@ -620,10 +535,7 @@
     {
       "type": "timeseries",
       "title": "Cluster CPU cores used",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 11,
       "description": "",
       "gridPos": {
@@ -662,10 +574,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(node_cpu_seconds_total{mode!=\"idle\"}[5m]))",
           "legendFormat": "used cores",
           "refId": "A",
@@ -673,10 +582,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "count(node_cpu_seconds_total{mode=\"idle\"})",
           "legendFormat": "total cores",
           "refId": "B",
@@ -688,10 +594,7 @@
     {
       "type": "timeseries",
       "title": "Cluster memory",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 12,
       "description": "",
       "gridPos": {
@@ -730,10 +633,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)",
           "legendFormat": "used",
           "refId": "A",
@@ -741,10 +641,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(node_memory_MemTotal_bytes)",
           "legendFormat": "total",
           "refId": "B",
@@ -756,10 +653,7 @@
     {
       "type": "timeseries",
       "title": "Pods by phase",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 13,
       "description": "",
       "gridPos": {
@@ -802,10 +696,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum by (phase)(kube_pod_status_phase)",
           "legendFormat": "{{phase}}",
           "refId": "A",
@@ -817,10 +708,7 @@
     {
       "type": "timeseries",
       "title": "Ingress req/s (Traefik) & 5xx",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 14,
       "description": "",
       "gridPos": {
@@ -859,10 +747,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(traefik_entrypoint_requests_total[5m]))",
           "legendFormat": "req/s",
           "refId": "A",
@@ -870,10 +755,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(traefik_entrypoint_requests_total{code=~\"5..\"}[5m]))",
           "legendFormat": "5xx/s",
           "refId": "B",
@@ -885,10 +767,7 @@
     {
       "type": "timeseries",
       "title": "DNS QPS & SERVFAIL",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 15,
       "description": "",
       "gridPos": {
@@ -927,10 +806,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(coredns_dns_requests_total[5m]))",
           "legendFormat": "queries/s",
           "refId": "A",
@@ -938,10 +814,7 @@
           "instant": false
         },
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(rate(coredns_dns_responses_total{rcode=\"SERVFAIL\"}[5m]))",
           "legendFormat": "servfail/s",
           "refId": "B",
@@ -953,10 +826,7 @@
     {
       "type": "timeseries",
       "title": "GPU utilisation",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 16,
       "description": "",
       "gridPos": {
@@ -996,10 +866,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "DCGM_FI_DEV_GPU_UTIL",
           "legendFormat": "{{Hostname}} gpu{{gpu}}",
           "refId": "A",
@@ -1024,10 +891,7 @@
     {
       "type": "stat",
       "title": "Targets down",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 18,
       "gridPos": {
         "h": 5,
@@ -1074,10 +938,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "count(up == 0) or vector(0)",
           "legendFormat": "",
           "refId": "A",
@@ -1089,10 +950,7 @@
     {
       "type": "stat",
       "title": "Pods not ready",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 19,
       "gridPos": {
         "h": 5,
@@ -1139,10 +997,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "count(kube_pod_status_ready{condition=\"true\"} == 0) or vector(0)",
           "legendFormat": "",
           "refId": "A",
@@ -1154,10 +1009,7 @@
     {
       "type": "stat",
       "title": "Restarts (1h)",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 20,
       "gridPos": {
         "h": 5,
@@ -1209,10 +1061,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "sum(increase(kube_pod_container_status_restarts_total[1h]))",
           "legendFormat": "",
           "refId": "A",
@@ -1224,10 +1073,7 @@
     {
       "type": "table",
       "title": "Targets currently DOWN",
-      "datasource": {
-        "type": "victoriametrics-metrics-datasource",
-        "uid": "${datasource}"
-      },
+      "datasource": "victoria-metrics",
       "id": 21,
       "description": "opnsense fw-2 is expected.",
       "gridPos": {
@@ -1273,10 +1119,7 @@
       ],
       "targets": [
         {
-          "datasource": {
-            "type": "victoriametrics-metrics-datasource",
-            "uid": "${datasource}"
-          },
+          "datasource": "victoria-metrics",
           "expr": "up == 0",
           "legendFormat": "",
           "refId": "A",

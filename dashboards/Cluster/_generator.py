@@ -1,8 +1,8 @@
 import json, os
 
-DS_TYPE = "victoriametrics-metrics-datasource"
-DS_UID = "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"  # grafana-operator uses the CR metadata.uid
-DS = {"type": DS_TYPE, "uid": "${datasource}"}
+# Reference the datasource by NAME (no dropdown variable). Grafana migrates a
+# string datasource reference to the matching UID on load.
+DS = "victoria-metrics"
 _id = [0]
 def nid():
     _id[0] += 1
@@ -134,7 +134,7 @@ NS = var_query("namespace", "Namespace", "label_values(kube_pod_info, namespace)
 boards = []
 
 # ============================= MASTER =============================
-b = Board("Talos — Master Overview", "talos-master", ["talos", "overview"], [var_ds(), NODE])
+b = Board("Talos — Master Overview", "talos-master", ["talos", "overview"], [])
 b.row("Fleet health")
 b.add([
     (STAT("Nodes Ready", 'sum(kube_node_status_condition{condition="Ready",status="true"})', thresholds=GREEN), 3, 4),
@@ -177,7 +177,7 @@ b.add([(TEXT("", "**Drill down:** "
 boards.append(b)
 
 # ============================= NODES =============================
-b = Board("Talos — Nodes", "talos-nodes", ["talos"], [var_ds(), NODE])
+b = Board("Talos — Nodes", "talos-nodes", ["talos"], [NODE])
 b.row("Utilisation")
 b.add([
     (TS("CPU usage % by node", [('100 * (1 - avg by (instance)(rate(node_cpu_seconds_total{mode="idle",instance=~"$node"}[5m])))', "{{instance}}")], unit="percent", maxv=100, table_legend=True), 12, 8),
@@ -206,7 +206,7 @@ b.add([
 boards.append(b)
 
 # ============================= CONTROL PLANE =============================
-b = Board("Talos — Control Plane", "talos-controlplane", ["talos"], [var_ds()])
+b = Board("Talos — Control Plane", "talos-controlplane", ["talos"], [])
 b.row("Health")
 b.add([
     (STAT("API servers up", 'sum(up{job="kube-apiserver"})', thresholds=GREEN), 4, 4),
@@ -242,7 +242,7 @@ b.add([
 boards.append(b)
 
 # ============================= WORKLOADS =============================
-b = Board("Talos — Workloads", "talos-workloads", ["talos"], [var_ds(), NS])
+b = Board("Talos — Workloads", "talos-workloads", ["talos"], [NS])
 b.row("Pods")
 b.add([
     (STAT("Running", 'sum(kube_pod_status_phase{phase="Running"})', thresholds=GREEN), 4, 4),
@@ -276,7 +276,7 @@ b.add([
 boards.append(b)
 
 # ============================= NETWORKING =============================
-b = Board("Talos — Networking (DNS & Hubble)", "talos-network", ["talos"], [var_ds()])
+b = Board("Talos — Networking (DNS & Hubble)", "talos-network", ["talos"], [])
 b.row("CoreDNS")
 b.add([
     (TS("Query rate by proto", [("sum by (proto)(rate(coredns_dns_requests_total[5m]))", "{{proto}}")], unit="reqps"), 8, 8),
@@ -299,7 +299,7 @@ b.add([
 boards.append(b)
 
 # ============================= GPU =============================
-b = Board("Talos — GPU (DCGM)", "talos-gpu", ["talos"], [var_ds(), NODE])
+b = Board("Talos — GPU (DCGM)", "talos-gpu", ["talos"], [NODE])
 b.row("Utilisation & memory")
 b.add([
     (TS("GPU utilisation %", [('DCGM_FI_DEV_GPU_UTIL{Hostname=~"$node"}', "{{Hostname}} gpu{{gpu}} {{modelName}}")], unit="percent", maxv=100, table_legend=True), 12, 8),
@@ -322,7 +322,7 @@ b.add([
 boards.append(b)
 
 # ============================= INGRESS =============================
-b = Board("Talos — Ingress (Traefik)", "talos-ingress", ["talos"], [var_ds()])
+b = Board("Talos — Ingress (Traefik)", "talos-ingress", ["talos"], [])
 b.row("Traffic")
 b.add([
     (STAT("Total req/s", "sum(rate(traefik_entrypoint_requests_total[5m]))", unit="reqps", decimals=1), 4, 4),
@@ -347,7 +347,7 @@ b.add([
 boards.append(b)
 
 # ============================= STORAGE =============================
-b = Board("Talos — Storage", "talos-storage", ["talos"], [var_ds(), NODE])
+b = Board("Talos — Storage", "talos-storage", ["talos"], [NODE])
 b.row("Node filesystems")
 b.add([
     (TS("Filesystem used % by mount", [('100 * (1 - node_filesystem_avail_bytes{instance=~"$node",fstype!~"tmpfs|ramfs|overlay"} / node_filesystem_size_bytes{instance=~"$node",fstype!~"tmpfs|ramfs|overlay"})', "{{instance}} {{mountpoint}}")], unit="percent", maxv=100), 12, 8),
@@ -375,7 +375,7 @@ b.add([
 boards.append(b)
 
 # ============================= DATABASES =============================
-b = Board("Talos — Databases", "talos-databases", ["talos"], [var_ds(), NS])
+b = Board("Talos — Databases", "talos-databases", ["talos"], [NS])
 b.row("PostgreSQL (CloudNativePG)")
 b.add([
     (TS("Connections by pod", [('sum by (pod)(cnpg_backends_total{namespace=~"$namespace"})', "{{pod}}")], table_legend=True), 8, 8),
