@@ -20,18 +20,21 @@
         "name": "datasource",
         "type": "datasource",
         "label": "Data source",
-        "query": "prometheus",
-        "current": {},
+        "query": "victoriametrics-metrics-datasource",
         "hide": 0,
         "refresh": 1,
-        "regex": ""
+        "regex": "",
+        "current": {
+          "text": "victoria-metrics",
+          "value": "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"
+        }
       },
       {
         "name": "namespace",
         "type": "query",
         "label": "Namespace",
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "${datasource}"
         },
         "query": {
@@ -98,7 +101,7 @@
       "type": "timeseries",
       "title": "Connections by pod",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 129,
@@ -143,7 +146,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (pod)(cnpg_backends_total{namespace=~\"$namespace\"})",
@@ -158,7 +161,7 @@
       "type": "timeseries",
       "title": "Database size",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 130,
@@ -200,7 +203,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "topk(10, cnpg_pg_database_size_bytes{namespace=~\"$namespace\"})",
@@ -215,7 +218,7 @@
       "type": "timeseries",
       "title": "Replication lag",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 131,
@@ -257,7 +260,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "cnpg_pg_replication_lag{namespace=~\"$namespace\"}",
@@ -272,7 +275,7 @@
       "type": "timeseries",
       "title": "Cache hit ratio",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 132,
@@ -315,7 +318,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (pod)(rate(cnpg_cache_hits{namespace=~\"$namespace\"}[5m])) / clamp_min(sum by (pod)(rate(cnpg_cache_hits{namespace=~\"$namespace\"}[5m]) + rate(cnpg_cache_miss{namespace=~\"$namespace\"}[5m])),1)",
@@ -330,7 +333,7 @@
       "type": "timeseries",
       "title": "WAL bytes/s",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 133,
@@ -372,7 +375,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (pod)(rate(cnpg_collector_wal_bytes{namespace=~\"$namespace\"}[5m]))",
@@ -387,7 +390,7 @@
       "type": "table",
       "title": "Last successful backup age",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 134,
@@ -436,7 +439,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "(time() - cnpg_collector_last_available_backup_timestamp{namespace=~\"$namespace\"}) > 0",
@@ -465,7 +468,7 @@
       "type": "stat",
       "title": "Galera cluster size",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 136,
@@ -511,7 +514,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "max(mysql_global_status_wsrep_cluster_size)",
@@ -526,7 +529,7 @@
       "type": "stat",
       "title": "wsrep ready",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 137,
@@ -576,7 +579,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "min(mysql_global_status_wsrep_ready)",
@@ -591,7 +594,7 @@
       "type": "stat",
       "title": "Local state (4=Synced)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 138,
@@ -641,7 +644,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "min(mysql_global_status_wsrep_local_state)",
@@ -656,7 +659,7 @@
       "type": "stat",
       "title": "MySQL up",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 139,
@@ -702,7 +705,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(mysql_up)",
@@ -717,7 +720,7 @@
       "type": "stat",
       "title": "Connections",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 140,
@@ -756,7 +759,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(mysql_global_status_threads_connected)",
@@ -771,7 +774,7 @@
       "type": "stat",
       "title": "Max connections",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 141,
@@ -810,7 +813,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "max(mysql_global_variables_max_connections)",
@@ -825,7 +828,7 @@
       "type": "timeseries",
       "title": "Queries/s (QPS)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 142,
@@ -867,7 +870,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (pod)(rate(mysql_global_status_queries[5m]))",
@@ -882,7 +885,7 @@
       "type": "timeseries",
       "title": "Threads connected vs max",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 143,
@@ -924,7 +927,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(mysql_global_status_threads_connected)",
@@ -935,7 +938,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "max(mysql_global_variables_max_connections)",
@@ -950,7 +953,7 @@
       "type": "timeseries",
       "title": "Network in/out",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 144,
@@ -992,7 +995,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(mysql_global_status_bytes_received[5m]))",
@@ -1003,7 +1006,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(mysql_global_status_bytes_sent[5m]))",
@@ -1031,7 +1034,7 @@
       "type": "timeseries",
       "title": "Frontend / backend sessions",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 146,
@@ -1073,7 +1076,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(haproxy_frontend_current_sessions)",
@@ -1084,7 +1087,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(haproxy_backend_current_sessions)",
@@ -1099,7 +1102,7 @@
       "type": "timeseries",
       "title": "HTTP responses by code",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 147,
@@ -1141,7 +1144,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (code)(rate(haproxy_frontend_http_responses_total[5m]))",
@@ -1156,7 +1159,7 @@
       "type": "timeseries",
       "title": "Backend errors/s",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 148,
@@ -1198,7 +1201,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(haproxy_backend_response_errors_total[5m]))",
@@ -1209,7 +1212,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(haproxy_backend_connection_errors_total[5m]))",

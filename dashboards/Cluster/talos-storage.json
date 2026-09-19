@@ -20,18 +20,21 @@
         "name": "datasource",
         "type": "datasource",
         "label": "Data source",
-        "query": "prometheus",
-        "current": {},
+        "query": "victoriametrics-metrics-datasource",
         "hide": 0,
         "refresh": 1,
-        "regex": ""
+        "regex": "",
+        "current": {
+          "text": "victoria-metrics",
+          "value": "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"
+        }
       },
       {
         "name": "node",
         "type": "query",
         "label": "Node",
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "${datasource}"
         },
         "query": {
@@ -98,7 +101,7 @@
       "type": "timeseries",
       "title": "Filesystem used % by mount",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 115,
@@ -141,7 +144,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "100 * (1 - node_filesystem_avail_bytes{instance=~\"$node\",fstype!~\"tmpfs|ramfs|overlay\"} / node_filesystem_size_bytes{instance=~\"$node\",fstype!~\"tmpfs|ramfs|overlay\"})",
@@ -156,7 +159,7 @@
       "type": "timeseries",
       "title": "Inodes used % by mount",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 116,
@@ -199,7 +202,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "100 * (1 - node_filesystem_files_free{instance=~\"$node\",fstype!~\"tmpfs|ramfs|overlay\"} / node_filesystem_files{instance=~\"$node\",fstype!~\"tmpfs|ramfs|overlay\"})",
@@ -227,7 +230,7 @@
       "type": "timeseries",
       "title": "PVCs by phase",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 118,
@@ -273,7 +276,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (phase)(kube_persistentvolumeclaim_status_phase)",
@@ -288,7 +291,7 @@
       "type": "timeseries",
       "title": "PVs by phase",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 119,
@@ -334,7 +337,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (phase)(kube_persistentvolume_status_phase)",
@@ -349,7 +352,7 @@
       "type": "table",
       "title": "Requested storage by namespace",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 120,
@@ -398,7 +401,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (namespace)(kube_persistentvolumeclaim_resource_requests_storage_bytes)",
@@ -427,7 +430,7 @@
       "type": "timeseries",
       "title": "Garage disk used % by node",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 122,
@@ -470,7 +473,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "100 * (1 - garage_local_disk_avail / clamp_min(garage_local_disk_total,1))",
@@ -485,7 +488,7 @@
       "type": "timeseries",
       "title": "Garage disk available",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 123,
@@ -527,7 +530,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "garage_local_disk_avail",
@@ -555,7 +558,7 @@
       "type": "timeseries",
       "title": "Disk temperature",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 125,
@@ -597,7 +600,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "truenas_exporter_node_hwmon_temp_celsius",
@@ -612,7 +615,7 @@
       "type": "timeseries",
       "title": "Disk read/write",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 126,
@@ -654,7 +657,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(truenas_exporter_node_disk_read_bytes_total[5m]))",
@@ -665,7 +668,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(truenas_exporter_node_disk_written_bytes_total[5m]))",
@@ -680,7 +683,7 @@
       "type": "timeseries",
       "title": "NFS throughput",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 127,
@@ -722,7 +725,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "rate(truenas_exporter_node_nfsd_disk_bytes_read_total[5m])",
@@ -733,7 +736,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "rate(truenas_exporter_node_nfsd_disk_bytes_written_total[5m])",

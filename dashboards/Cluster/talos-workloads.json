@@ -20,18 +20,21 @@
         "name": "datasource",
         "type": "datasource",
         "label": "Data source",
-        "query": "prometheus",
-        "current": {},
+        "query": "victoriametrics-metrics-datasource",
         "hide": 0,
         "refresh": 1,
-        "regex": ""
+        "regex": "",
+        "current": {
+          "text": "victoria-metrics",
+          "value": "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"
+        }
       },
       {
         "name": "namespace",
         "type": "query",
         "label": "Namespace",
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "${datasource}"
         },
         "query": {
@@ -98,7 +101,7 @@
       "type": "stat",
       "title": "Running",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 60,
@@ -144,7 +147,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(kube_pod_status_phase{phase=\"Running\"})",
@@ -159,7 +162,7 @@
       "type": "stat",
       "title": "Pending",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 61,
@@ -209,7 +212,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(kube_pod_status_phase{phase=\"Pending\"})",
@@ -224,7 +227,7 @@
       "type": "stat",
       "title": "Failed",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 62,
@@ -274,7 +277,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(kube_pod_status_phase{phase=\"Failed\"})",
@@ -289,7 +292,7 @@
       "type": "stat",
       "title": "Not ready",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 63,
@@ -339,7 +342,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "count(kube_pod_status_ready{condition=\"true\"} == 0) or vector(0)",
@@ -354,7 +357,7 @@
       "type": "stat",
       "title": "Restarts (1h)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 64,
@@ -409,7 +412,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(increase(kube_pod_container_status_restarts_total[1h]))",
@@ -424,7 +427,7 @@
       "type": "stat",
       "title": "Namespaces",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 65,
@@ -462,7 +465,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "count(count by (namespace)(kube_pod_info))",
@@ -490,7 +493,7 @@
       "type": "table",
       "title": "Pod restarts (top 20, 1h)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 67,
@@ -539,7 +542,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "topk(20, sum by (namespace,pod)(increase(kube_pod_container_status_restarts_total[1h])))",
@@ -555,7 +558,7 @@
       "type": "table",
       "title": "Containers waiting",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 68,
@@ -604,7 +607,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (namespace,pod,reason)(kube_pod_container_status_waiting_reason) > 0",
@@ -620,7 +623,7 @@
       "type": "table",
       "title": "Last terminated (non-Completed)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 69,
@@ -669,7 +672,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (namespace,pod,reason)(kube_pod_container_status_last_terminated_reason{reason!=\"Completed\"}) > 0",
@@ -698,7 +701,7 @@
       "type": "table",
       "title": "Deployments not fully available",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 71,
@@ -747,7 +750,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "(kube_deployment_status_replicas_available / kube_deployment_spec_replicas) < 1",
@@ -763,7 +766,7 @@
       "type": "table",
       "title": "StatefulSets not fully ready",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 72,
@@ -812,7 +815,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "(kube_statefulset_status_replicas_ready / kube_statefulset_replicas) < 1",
@@ -828,7 +831,7 @@
       "type": "table",
       "title": "DaemonSets missing pods",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 73,
@@ -877,7 +880,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "(kube_daemonset_status_number_ready / kube_daemonset_status_desired_number_scheduled) < 1",
@@ -906,7 +909,7 @@
       "type": "timeseries",
       "title": "CPU by namespace (top 10)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 75,
@@ -955,7 +958,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "topk(10, sum by (namespace)(rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[5m])))",
@@ -970,7 +973,7 @@
       "type": "timeseries",
       "title": "Memory by namespace (top 10)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 76,
@@ -1019,7 +1022,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "topk(10, sum by (namespace)(container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"}))",
@@ -1034,7 +1037,7 @@
       "type": "table",
       "title": "Top pods by CPU",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 77,
@@ -1083,7 +1086,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "topk(15, sum by (namespace,pod)(rate(container_cpu_usage_seconds_total{container!=\"\",namespace=~\"$namespace\"}[5m])))",
@@ -1099,7 +1102,7 @@
       "type": "table",
       "title": "Top pods by memory",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 78,
@@ -1148,7 +1151,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "topk(15, sum by (namespace,pod)(container_memory_working_set_bytes{container!=\"\",namespace=~\"$namespace\"}))",

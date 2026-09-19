@@ -1,6 +1,8 @@
 import json, os
 
-DS = {"type": "prometheus", "uid": "${datasource}"}
+DS_TYPE = "victoriametrics-metrics-datasource"
+DS_UID = "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"  # grafana-operator uses the CR metadata.uid
+DS = {"type": DS_TYPE, "uid": "${datasource}"}
 _id = [0]
 def nid():
     _id[0] += 1
@@ -118,7 +120,8 @@ class Board:
 
 def var_ds():
     return {"name": "datasource", "type": "datasource", "label": "Data source",
-            "query": "prometheus", "current": {}, "hide": 0, "refresh": 1, "regex": ""}
+            "query": DS_TYPE, "hide": 0, "refresh": 1, "regex": "",
+            "current": {"text": "victoria-metrics", "value": DS_UID}}
 def var_query(name, label, q):
     return {"name": name, "type": "query", "label": label, "datasource": DS,
             "query": {"query": q, "refId": name}, "definition": q,

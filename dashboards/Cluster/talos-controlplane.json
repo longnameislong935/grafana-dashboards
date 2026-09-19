@@ -20,11 +20,14 @@
         "name": "datasource",
         "type": "datasource",
         "label": "Data source",
-        "query": "prometheus",
-        "current": {},
+        "query": "victoriametrics-metrics-datasource",
         "hide": 0,
         "refresh": 1,
-        "regex": ""
+        "regex": "",
+        "current": {
+          "text": "victoria-metrics",
+          "value": "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"
+        }
       }
     ]
   },
@@ -75,7 +78,7 @@
       "type": "stat",
       "title": "API servers up",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 40,
@@ -121,7 +124,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(up{job=\"kube-apiserver\"})",
@@ -136,7 +139,7 @@
       "type": "stat",
       "title": "Scheduler up",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 41,
@@ -182,7 +185,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(up{job=\"kube-scheduler\"})",
@@ -197,7 +200,7 @@
       "type": "stat",
       "title": "Controller-mgr up",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 42,
@@ -243,7 +246,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(up{job=\"kube-controller-manager\"})",
@@ -258,7 +261,7 @@
       "type": "stat",
       "title": "etcd members",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 43,
@@ -304,7 +307,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "count(up{job=\"etcd\"} == 1)",
@@ -319,7 +322,7 @@
       "type": "stat",
       "title": "etcd has leader",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 44,
@@ -369,7 +372,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "min(etcd_server_has_leader)",
@@ -384,7 +387,7 @@
       "type": "stat",
       "title": "API 5xx %",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 45,
@@ -439,7 +442,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "100 * sum(rate(apiserver_request_total{code=~\"5..\"}[5m])) / clamp_min(sum(rate(apiserver_request_total[5m])),1)",
@@ -467,7 +470,7 @@
       "type": "timeseries",
       "title": "Request rate by verb",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 47,
@@ -512,7 +515,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (verb)(rate(apiserver_request_total[5m]))",
@@ -527,7 +530,7 @@
       "type": "timeseries",
       "title": "Request rate by resource (top 10)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 48,
@@ -572,7 +575,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "topk(10, sum by (resource)(rate(apiserver_request_total[5m])))",
@@ -587,7 +590,7 @@
       "type": "timeseries",
       "title": "Latency p99 (read verbs)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 49,
@@ -629,7 +632,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "histogram_quantile(0.99, sum by (le)(rate(apiserver_request_duration_seconds_bucket{verb=~\"GET|LIST\"}[5m])))",
@@ -644,7 +647,7 @@
       "type": "timeseries",
       "title": "Latency p99 (write verbs)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 50,
@@ -686,7 +689,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "histogram_quantile(0.99, sum by (le)(rate(apiserver_request_duration_seconds_bucket{verb=~\"POST|PUT|PATCH|DELETE\"}[5m])))",
@@ -701,7 +704,7 @@
       "type": "timeseries",
       "title": "Client\u2192API request rate by code",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 51,
@@ -743,7 +746,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (code)(rate(rest_client_requests_total[5m]))",
@@ -771,7 +774,7 @@
       "type": "timeseries",
       "title": "etcd DB size",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 53,
@@ -813,7 +816,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "etcd_mvcc_db_total_size_in_bytes",
@@ -828,7 +831,7 @@
       "type": "timeseries",
       "title": "WAL fsync p99 / backend commit p99",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 54,
@@ -870,7 +873,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "histogram_quantile(0.99, sum by (le)(rate(etcd_disk_wal_fsync_duration_seconds_bucket[5m])))",
@@ -881,7 +884,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "histogram_quantile(0.99, sum by (le)(rate(etcd_disk_backend_commit_duration_seconds_bucket[5m])))",
@@ -896,7 +899,7 @@
       "type": "timeseries",
       "title": "Leader changes / proposal failures",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 55,
@@ -938,7 +941,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(etcd_server_leader_changes_seen_total[5m]))",
@@ -949,7 +952,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(etcd_server_proposals_failed_total[5m]))",
@@ -977,7 +980,7 @@
       "type": "timeseries",
       "title": "Workqueue depth (top 10)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 57,
@@ -1019,7 +1022,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "topk(10, workqueue_depth)",
@@ -1034,7 +1037,7 @@
       "type": "timeseries",
       "title": "Workqueue add rate (top 10)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 58,
@@ -1076,7 +1079,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "topk(10, sum by (name)(rate(workqueue_adds_total[5m])))",

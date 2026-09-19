@@ -20,18 +20,21 @@
         "name": "datasource",
         "type": "datasource",
         "label": "Data source",
-        "query": "prometheus",
-        "current": {},
+        "query": "victoriametrics-metrics-datasource",
         "hide": 0,
         "refresh": 1,
-        "regex": ""
+        "regex": "",
+        "current": {
+          "text": "victoria-metrics",
+          "value": "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"
+        }
       },
       {
         "name": "node",
         "type": "query",
         "label": "Node",
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "${datasource}"
         },
         "query": {
@@ -98,7 +101,7 @@
       "type": "timeseries",
       "title": "GPU utilisation %",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 92,
@@ -144,7 +147,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "DCGM_FI_DEV_GPU_UTIL{Hostname=~\"$node\"}",
@@ -159,7 +162,7 @@
       "type": "timeseries",
       "title": "GPU memory used %",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 93,
@@ -202,7 +205,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "100 * DCGM_FI_DEV_FB_USED{Hostname=~\"$node\"} / clamp_min(DCGM_FI_DEV_FB_USED{Hostname=~\"$node\"} + DCGM_FI_DEV_FB_FREE{Hostname=~\"$node\"},1)",
@@ -230,7 +233,7 @@
       "type": "timeseries",
       "title": "Temperature",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 95,
@@ -272,7 +275,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "DCGM_FI_DEV_GPU_TEMP{Hostname=~\"$node\"}",
@@ -287,7 +290,7 @@
       "type": "timeseries",
       "title": "Power draw",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 96,
@@ -329,7 +332,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "DCGM_FI_DEV_POWER_USAGE{Hostname=~\"$node\"}",
@@ -344,7 +347,7 @@
       "type": "timeseries",
       "title": "Energy (rate)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 97,
@@ -386,7 +389,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "rate(DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION{Hostname=~\"$node\"}[5m]) / 1000",
@@ -414,7 +417,7 @@
       "type": "timeseries",
       "title": "SM / memory clock",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 99,
@@ -456,7 +459,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "DCGM_FI_DEV_SM_CLOCK{Hostname=~\"$node\"}",
@@ -467,7 +470,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "DCGM_FI_DEV_MEM_CLOCK{Hostname=~\"$node\"}",
@@ -482,7 +485,7 @@
       "type": "timeseries",
       "title": "Encoder / decoder util %",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 100,
@@ -525,7 +528,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "DCGM_FI_DEV_ENC_UTIL{Hostname=~\"$node\"}",
@@ -536,7 +539,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "DCGM_FI_DEV_DEC_UTIL{Hostname=~\"$node\"}",
@@ -551,7 +554,7 @@
       "type": "timeseries",
       "title": "Memory-copy util %",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 101,
@@ -594,7 +597,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "DCGM_FI_DEV_MEM_COPY_UTIL{Hostname=~\"$node\"}",

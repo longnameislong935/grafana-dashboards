@@ -20,11 +20,14 @@
         "name": "datasource",
         "type": "datasource",
         "label": "Data source",
-        "query": "prometheus",
-        "current": {},
+        "query": "victoriametrics-metrics-datasource",
         "hide": 0,
         "refresh": 1,
-        "regex": ""
+        "regex": "",
+        "current": {
+          "text": "victoria-metrics",
+          "value": "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"
+        }
       }
     ]
   },
@@ -75,7 +78,7 @@
       "type": "stat",
       "title": "Total req/s",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 103,
@@ -114,7 +117,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(traefik_entrypoint_requests_total[5m]))",
@@ -129,7 +132,7 @@
       "type": "stat",
       "title": "4xx/s",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 104,
@@ -180,7 +183,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(traefik_entrypoint_requests_total{code=~\"4..\"}[5m]))",
@@ -195,7 +198,7 @@
       "type": "stat",
       "title": "5xx/s",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 105,
@@ -246,7 +249,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(traefik_entrypoint_requests_total{code=~\"5..\"}[5m]))",
@@ -261,7 +264,7 @@
       "type": "stat",
       "title": "Open connections",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 106,
@@ -300,7 +303,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(traefik_entrypoint_open_connections)",
@@ -315,7 +318,7 @@
       "type": "stat",
       "title": "Config reloads (last ok)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 107,
@@ -353,7 +356,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "max(traefik_config_last_reload_success)",
@@ -381,7 +384,7 @@
       "type": "timeseries",
       "title": "Request rate by entrypoint",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 109,
@@ -426,7 +429,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (entrypoint)(rate(traefik_entrypoint_requests_total[5m]))",
@@ -441,7 +444,7 @@
       "type": "timeseries",
       "title": "Responses by status class",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 110,
@@ -487,7 +490,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(traefik_entrypoint_requests_total{code=~\"2..\"}[5m]))",
@@ -498,7 +501,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(traefik_entrypoint_requests_total{code=~\"3..\"}[5m]))",
@@ -509,7 +512,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(traefik_entrypoint_requests_total{code=~\"4..\"}[5m]))",
@@ -520,7 +523,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum(rate(traefik_entrypoint_requests_total{code=~\"5..\"}[5m]))",
@@ -548,7 +551,7 @@
       "type": "timeseries",
       "title": "Entrypoint latency p99",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 112,
@@ -590,7 +593,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "histogram_quantile(0.99, sum by (le,entrypoint)(rate(traefik_entrypoint_request_duration_seconds_bucket[5m])))",
@@ -605,7 +608,7 @@
       "type": "timeseries",
       "title": "Per-service request rate (top 10)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 113,
@@ -650,7 +653,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "topk(10, sum by (service)(rate(traefik_service_requests_total[5m])))",

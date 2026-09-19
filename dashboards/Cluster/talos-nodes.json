@@ -20,18 +20,21 @@
         "name": "datasource",
         "type": "datasource",
         "label": "Data source",
-        "query": "prometheus",
-        "current": {},
+        "query": "victoriametrics-metrics-datasource",
         "hide": 0,
         "refresh": 1,
-        "regex": ""
+        "regex": "",
+        "current": {
+          "text": "victoria-metrics",
+          "value": "fb0482e5-8df8-49e8-a9cf-2a93a6a89b53"
+        }
       },
       {
         "name": "node",
         "type": "query",
         "label": "Node",
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "${datasource}"
         },
         "query": {
@@ -98,7 +101,7 @@
       "type": "timeseries",
       "title": "CPU usage % by node",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 25,
@@ -144,7 +147,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "100 * (1 - avg by (instance)(rate(node_cpu_seconds_total{mode=\"idle\",instance=~\"$node\"}[5m])))",
@@ -159,7 +162,7 @@
       "type": "timeseries",
       "title": "Memory usage % by node",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 26,
@@ -205,7 +208,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "100 * (1 - node_memory_MemAvailable_bytes{instance=~\"$node\"} / node_memory_MemTotal_bytes{instance=~\"$node\"})",
@@ -220,7 +223,7 @@
       "type": "timeseries",
       "title": "Load1 per core",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 27,
@@ -262,7 +265,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "node_load1{instance=~\"$node\"} / count by (instance)(node_cpu_seconds_total{mode=\"idle\",instance=~\"$node\"})",
@@ -277,7 +280,7 @@
       "type": "timeseries",
       "title": "CPU by mode (cluster)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 28,
@@ -323,7 +326,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (mode)(rate(node_cpu_seconds_total{mode!=\"idle\",instance=~\"$node\"}[5m]))",
@@ -338,7 +341,7 @@
       "type": "timeseries",
       "title": "Memory available by node",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 29,
@@ -380,7 +383,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "node_memory_MemAvailable_bytes{instance=~\"$node\"}",
@@ -408,7 +411,7 @@
       "type": "timeseries",
       "title": "Filesystem used % by mount",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 31,
@@ -451,7 +454,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "100 * (1 - node_filesystem_avail_bytes{instance=~\"$node\",fstype!~\"tmpfs|ramfs|overlay\"} / node_filesystem_size_bytes{instance=~\"$node\",fstype!~\"tmpfs|ramfs|overlay\"})",
@@ -466,7 +469,7 @@
       "type": "timeseries",
       "title": "Disk I/O utilisation by node",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 32,
@@ -508,7 +511,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (instance)(rate(node_disk_io_time_seconds_total{instance=~\"$node\"}[5m]))",
@@ -523,7 +526,7 @@
       "type": "timeseries",
       "title": "Network receive",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 33,
@@ -565,7 +568,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (instance)(rate(node_network_receive_bytes_total{instance=~\"$node\"}[5m]))",
@@ -580,7 +583,7 @@
       "type": "timeseries",
       "title": "Network transmit",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 34,
@@ -622,7 +625,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "sum by (instance)(rate(node_network_transmit_bytes_total{instance=~\"$node\"}[5m]))",
@@ -637,7 +640,7 @@
       "type": "timeseries",
       "title": "Conntrack entries",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 35,
@@ -679,7 +682,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "node_nf_conntrack_entries{instance=~\"$node\"}",
@@ -707,7 +710,7 @@
       "type": "stat",
       "title": "Uptime (min node)",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 37,
@@ -745,7 +748,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "min(time() - node_boot_time_seconds)",
@@ -760,7 +763,7 @@
       "type": "table",
       "title": "Nodes",
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "${datasource}"
       },
       "id": 38,
@@ -809,7 +812,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "${datasource}"
           },
           "expr": "node_uname_info{instance=~\"$node\"}",
