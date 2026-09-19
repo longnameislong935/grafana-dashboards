@@ -174,7 +174,7 @@ b.add([(TEXT("", "**Drill down:** "
     "[Workloads](/d/talos-workloads) · [Runtime](/d/talos-runtime) · [Networking](/d/talos-network) · "
     "[GPU](/d/talos-gpu) · [Ingress](/d/talos-ingress) · [Storage](/d/talos-storage) · "
     "[Databases](/d/talos-databases) · [Certificates](/d/talos-certmanager) · [Observability](/d/talos-victoriametrics) · "
-    "[Media](/d/talos-media) · [Apps](/d/talos-apps)  \n"
+    "[Media](/d/talos-media) · [Apps](/d/talos-apps) · [Pod Explorer](/d/talos-pods) · [TrueNAS](/d/talos-truenas)  \n"
     "_Use the **Talos boards** dropdown (top-left) to jump between dashboards with the same time range._"), 24, 3)])
 boards.append(b)
 
@@ -602,6 +602,91 @@ b.add([
 b.add([
     (TS("Authentik request rate", [("sum(rate(authentik_main_request_duration_seconds_count[5m]))", "req/s")], unit="reqps", desc="VERIFY metric name against your Authentik version."), 12, 7),
     (TEXT("", "**Authentik / n8n / Immich** expose richer metrics than the tiles above (logins & flows; workflow executions; job-queue depth), but the exact metric names vary by version. Paste the `authentik_*`, `n8n_*`, `immich_*` sample and I'll flesh these rows out with the real names."), 12, 7),
+])
+boards.append(b)
+
+# ============================= POD EXPLORER =============================
+POD = {"name": "pod", "type": "query", "label": "Pod", "datasource": DS,
+       "query": {"query": 'label_values(container_cpu_usage_seconds_total{namespace=~"$namespace",container!=""}, pod)', "refId": "pod"},
+       "definition": 'label_values(container_cpu_usage_seconds_total{namespace=~"$namespace",container!=""}, pod)',
+       "includeAll": True, "multi": True, "allValue": ".*", "current": {"text": "All", "value": "$__all"}, "refresh": 2, "sort": 1}
+CW = '{namespace=~"$namespace",pod=~"$pod",container!="",container!="POD"}'   # real containers
+PW = '{namespace=~"$namespace",pod=~"$pod"}'                                   # pod-level (net)
+KW = '{namespace=~"$namespace",pod=~"$pod"}'                                   # KSM
+
+b = Board("Talos — Pod Explorer", "talos-pods", ["talos"], [NS, POD])
+b.row("Selection")
+b.add([
+    (STAT("Pods selected", f'count(count by (pod)(container_cpu_usage_seconds_total{CW}))'), 4, 4),
+    (STAT("CPU (cores)", f'sum(rate(container_cpu_usage_seconds_total{CW}[5m]))', unit="short", decimals=2), 5, 4),
+    (STAT("Memory", f'sum(container_memory_working_set_bytes{CW})', unit="bytes"), 5, 4),
+    (STAT("Restarts (1h)", f'sum(increase(kube_pod_container_status_restarts_total{KW}[1h])) or vector(0)', decimals=0, thresholds=[{"color":"green","value":None},{"color":"yellow","value":1}], bg=True), 5, 4),
+    (STAT("Not ready", f'count(kube_pod_status_ready{{condition="true",namespace=~"$namespace",pod=~"$pod"}} == 0) or vector(0)', thresholds=REDPOS, bg=True), 5, 4),
+])
+b.row("CPU")
+b.add([
+    (TS("CPU cores by pod", [(f'sum by (pod)(rate(container_cpu_usage_seconds_total{CW}[5m]))', "{{pod}}")], unit="short", table_legend=True, desc="Per-pod CPU usage (sum of its containers)."), 12, 9),
+    (TS("CPU throttling % by pod", [(f'100 * sum by (pod)(rate(container_cpu_cfs_throttled_periods_total{CW}[5m])) / clamp_min(sum by (pod)(rate(container_cpu_cfs_periods_total{CW}[5m])),1)', "{{pod}}")], unit="percent", maxv=100, desc="High throttling = pod hitting its CPU limit."), 12, 9),
+])
+b.row("Memory")
+b.add([
+    (TS("Working set by pod", [(f'sum by (pod)(container_memory_working_set_bytes{CW})', "{{pod}}")], unit="bytes", table_legend=True), 12, 9),
+    (TS("Memory % of limit by pod", [(f'100 * sum by (pod)(container_memory_working_set_bytes{CW}) / clamp_min(sum by (pod)(container_spec_memory_limit_bytes{CW}),1)', "{{pod}}")], unit="percent", desc="Only meaningful for pods that set a memory limit; >100% risks OOMKill."), 12, 9),
+])
+b.row("Network")
+b.add([
+    (TS("Receive by pod", [(f'sum by (pod)(rate(container_network_receive_bytes_total{PW}[5m]))', "{{pod}}")], unit="Bps", table_legend=True), 12, 9),
+    (TS("Transmit by pod", [(f'sum by (pod)(rate(container_network_transmit_bytes_total{PW}[5m]))', "{{pod}}")], unit="Bps", table_legend=True), 12, 9),
+])
+b.row("Disk (container filesystem)")
+b.add([
+    (TS("Filesystem usage by pod", [(f'sum by (pod)(container_fs_usage_bytes{CW})', "{{pod}}")], unit="bytes", table_legend=True, desc="Container ephemeral/rootfs usage. NOTE: live PVC usage isn't available (kubelet volume stats empty)."), 12, 9),
+    (TS("Disk read/write by pod", [(f'sum by (pod)(rate(container_fs_reads_bytes_total{PW}[5m]))', "{{pod}} read"), (f'-sum by (pod)(rate(container_fs_writes_bytes_total{PW}[5m]))', "{{pod}} write")], unit="Bps", desc="If empty, cAdvisor fs IO counters aren't exposed on this setup."), 12, 9),
+])
+b.row("State (kube-state-metrics)")
+b.add([
+    (TABLE("Restarts by pod (1h)", f'topk(25, sum by (namespace,pod)(increase(kube_pod_container_status_restarts_total{KW}[1h])) > 0)'), 8, 8),
+    (TABLE("Containers waiting", f'sum by (namespace,pod,reason)(kube_pod_container_status_waiting_reason{KW}) > 0', desc="CrashLoopBackOff / ImagePullBackOff / etc."), 8, 8),
+    (TS("Pods by phase (selection)", [(f'sum by (phase)(kube_pod_status_phase{KW})', "{{phase}}")], stack=True, fill=30), 8, 8),
+])
+boards.append(b)
+
+# ============================= TRUENAS =============================
+T = "truenas_exporter_node_"
+b = Board("Talos — TrueNAS", "talos-truenas", ["talos"], [])
+b.row("Host")
+b.add([
+    (STAT("CPU used", f'100 * (1 - avg(rate({T}cpu_seconds_total{{mode="idle"}}[5m])))', unit="percent", decimals=1, thresholds=PCT, bg=True), 6, 4),
+    (STAT("Memory used", f'100 * (1 - sum({T}memory_MemAvailable_bytes)/sum({T}memory_MemTotal_bytes))', unit="percent", decimals=1, thresholds=PCT, bg=True), 6, 4),
+    (STAT("Load1", f'{T}load1', unit="short", decimals=2), 6, 4),
+    (STAT("Uptime", f'time() - {T}boot_time_seconds', unit="s", textmode="value"), 6, 4),
+])
+b.row("Compute")
+b.add([
+    (TS("CPU by mode", [(f'sum by (mode)(rate({T}cpu_seconds_total{{mode!="idle"}}[5m]))', "{{mode}}")], unit="short", stack=True, fill=30), 8, 8),
+    (TS("Load average", [(f'{T}load1', "1m"), (f'{T}load5', "5m"), (f'{T}load15', "15m")], unit="short"), 8, 8),
+    (TS("Memory used vs total", [(f'sum({T}memory_MemTotal_bytes - {T}memory_MemAvailable_bytes)', "used"), (f'sum({T}memory_MemTotal_bytes)', "total")], unit="bytes"), 8, 8),
+])
+b.row("Pools / datasets (filesystem)")
+b.add([
+    (TS("Used % by mount", [(f'100 * (1 - {T}filesystem_avail_bytes{{fstype!~"tmpfs|devtmpfs|ramfs"}} / {T}filesystem_size_bytes{{fstype!~"tmpfs|devtmpfs|ramfs"}})', "{{mountpoint}}")], unit="percent", maxv=100, table_legend=True, desc="ZFS pools/datasets appear as mountpoints here."), 12, 9),
+    (TABLE("Free space by mount", f'{T}filesystem_avail_bytes{{fstype!~"tmpfs|devtmpfs|ramfs"}}', unit="bytes", desc="Free bytes per pool/dataset.", sortdesc=False), 12, 9),
+])
+b.row("Disk & network")
+b.add([
+    (TS("Disk throughput", [(f'sum(rate({T}disk_read_bytes_total[5m]))', "read"), (f'sum(rate({T}disk_written_bytes_total[5m]))', "write")], unit="Bps"), 8, 8),
+    (TS("Network", [(f'sum(rate({T}network_receive_bytes_total[5m]))', "rx"), (f'sum(rate({T}network_transmit_bytes_total[5m]))', "tx")], unit="Bps"), 8, 8),
+    (TS("Disk temperatures", [(f'{T}hwmon_temp_celsius', "{{chip}} {{sensor}}")], unit="celsius", desc="Drive/sensor temps."), 8, 8),
+])
+b.row("ZFS ARC")
+b.add([
+    (TS("ARC size vs target", [(f'{T}zfs_arc_size', "ARC size"), (f'{T}zfs_arc_c', "target (c)"), (f'{T}zfs_arc_c_max', "max")], unit="bytes"), 8, 8),
+    (TS("ARC hit ratio", [(f'sum(rate({T}zfs_arc_hits[5m])) / clamp_min(sum(rate({T}zfs_arc_hits[5m])) + sum(rate({T}zfs_arc_misses[5m])),1)', "hit ratio")], unit="percentunit", maxv=1, desc="Read cache effectiveness."), 8, 8),
+    (TS("L2ARC size / hits", [(f'{T}zfs_arc_l2_size', "L2 size"), (f'sum(rate({T}zfs_arc_l2_hits[5m]))', "L2 hits/s")], unit="short", desc="Only if you have an L2ARC device."), 8, 8),
+])
+b.row("NFS")
+b.add([
+    (TS("NFS throughput", [(f'rate({T}nfsd_disk_bytes_read_total[5m])', "read"), (f'rate({T}nfsd_disk_bytes_written_total[5m])', "write")], unit="Bps"), 24, 7),
 ])
 boards.append(b)
 
