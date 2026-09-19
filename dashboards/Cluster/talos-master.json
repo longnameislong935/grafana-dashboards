@@ -1154,7 +1154,7 @@
       },
       "options": {
         "mode": "markdown",
-        "content": "**Drill down:** [Nodes](/d/talos-nodes) \u00b7 [Control plane](/d/talos-controlplane) \u00b7 [Workloads](/d/talos-workloads) \u00b7 [Networking](/d/talos-network) \u00b7 [GPU](/d/talos-gpu) \u00b7 [Ingress](/d/talos-ingress) \u00b7 [Storage](/d/talos-storage) \u00b7 [Databases](/d/talos-databases)  \n_Use the **Talos boards** dropdown (top-left) to jump between dashboards with the same time range._"
+        "content": "**Drill down:** [Nodes](/d/talos-nodes) \u00b7 [Control plane](/d/talos-controlplane) \u00b7 [Capacity](/d/talos-capacity) \u00b7 [Workloads](/d/talos-workloads) \u00b7 [Runtime](/d/talos-runtime) \u00b7 [Networking](/d/talos-network) \u00b7 [GPU](/d/talos-gpu) \u00b7 [Ingress](/d/talos-ingress) \u00b7 [Storage](/d/talos-storage) \u00b7 [Databases](/d/talos-databases) \u00b7 [Certificates](/d/talos-certmanager) \u00b7 [Observability](/d/talos-victoriametrics)  \n_Use the **Talos boards** dropdown (top-left) to jump between dashboards with the same time range._"
       }
     }
   ]

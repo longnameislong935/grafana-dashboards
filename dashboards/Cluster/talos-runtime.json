@@ -1,0 +1,552 @@
+{
+  "title": "Talos \u2014 Runtime (kubelet & containerd)",
+  "uid": "talos-runtime",
+  "tags": [
+    "talos"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "refresh": "30s",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "node",
+        "type": "query",
+        "label": "Node",
+        "datasource": "victoria-metrics",
+        "query": {
+          "query": "label_values(node_memory_MemTotal_bytes, instance)",
+          "refId": "node"
+        },
+        "definition": "label_values(node_memory_MemTotal_bytes, instance)",
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "refresh": 2,
+        "sort": 1
+      }
+    ]
+  },
+  "links": [
+    {
+      "type": "dashboards",
+      "tags": [
+        "talos"
+      ],
+      "title": "Talos boards",
+      "asDropdown": true,
+      "includeVars": true,
+      "keepTime": true,
+      "targetBlank": false,
+      "icon": "external link"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "row",
+      "title": "Kubelet",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 179,
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "Running pods per node",
+      "datasource": "victoria-metrics",
+      "id": 180,
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 1
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": "victoria-metrics",
+          "expr": "kubelet_running_pods{instance=~\"$node\"}",
+          "legendFormat": "{{instance}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Running containers per node",
+      "datasource": "victoria-metrics",
+      "id": 181,
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 1
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": "victoria-metrics",
+          "expr": "kubelet_running_containers{instance=~\"$node\"}",
+          "legendFormat": "{{instance}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Pod start rate",
+      "datasource": "victoria-metrics",
+      "id": 182,
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 1
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": "victoria-metrics",
+          "expr": "sum(rate(kubelet_pod_start_duration_seconds_count{instance=~\"$node\"}[5m]))",
+          "legendFormat": "pod starts/s",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Runtime operations / sec",
+      "datasource": "victoria-metrics",
+      "id": 183,
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 9
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": "victoria-metrics",
+          "expr": "sum by (operation_type)(rate(kubelet_runtime_operations_total{instance=~\"$node\"}[5m]))",
+          "legendFormat": "{{operation_type}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Runtime operation errors / sec",
+      "datasource": "victoria-metrics",
+      "id": 184,
+      "description": "Any sustained errors are worth investigating.",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 9
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": "victoria-metrics",
+          "expr": "sum by (operation_type)(rate(kubelet_runtime_operations_errors_total{instance=~\"$node\"}[5m]))",
+          "legendFormat": "{{operation_type}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "PLEG relist p99",
+      "datasource": "victoria-metrics",
+      "id": 185,
+      "description": "High PLEG latency = kubelet under pressure.",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 9
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": "victoria-metrics",
+          "expr": "histogram_quantile(0.99, sum by (le)(rate(kubelet_pleg_relist_duration_seconds_bucket{instance=~\"$node\"}[5m])))",
+          "legendFormat": "p99",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "title": "containerd (CRI)",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 186,
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "CRI op latency p99",
+      "datasource": "victoria-metrics",
+      "id": 187,
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 18
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": "victoria-metrics",
+          "expr": "histogram_quantile(0.99, sum by (le)(rate(containerd_cri_container_create_seconds_bucket[5m])))",
+          "legendFormat": "create",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        },
+        {
+          "datasource": "victoria-metrics",
+          "expr": "histogram_quantile(0.99, sum by (le)(rate(containerd_cri_container_start_seconds_bucket[5m])))",
+          "legendFormat": "start",
+          "refId": "B",
+          "range": true,
+          "instant": false
+        },
+        {
+          "datasource": "victoria-metrics",
+          "expr": "histogram_quantile(0.99, sum by (le)(rate(containerd_cri_container_stop_seconds_bucket[5m])))",
+          "legendFormat": "stop",
+          "refId": "C",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Container lifecycle ops / sec",
+      "datasource": "victoria-metrics",
+      "id": 188,
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 18
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": "victoria-metrics",
+          "expr": "sum(rate(containerd_cri_container_create_seconds_count[5m]))",
+          "legendFormat": "create",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        },
+        {
+          "datasource": "victoria-metrics",
+          "expr": "sum(rate(containerd_cri_container_start_seconds_count[5m]))",
+          "legendFormat": "start",
+          "refId": "B",
+          "range": true,
+          "instant": false
+        },
+        {
+          "datasource": "victoria-metrics",
+          "expr": "sum(rate(containerd_cri_container_stop_seconds_count[5m]))",
+          "legendFormat": "stop",
+          "refId": "C",
+          "range": true,
+          "instant": false
+        },
+        {
+          "datasource": "victoria-metrics",
+          "expr": "sum(rate(containerd_cri_container_remove_seconds_count[5m]))",
+          "legendFormat": "remove",
+          "refId": "D",
+          "range": true,
+          "instant": false
+        }
+      ]
+    }
+  ]
+}

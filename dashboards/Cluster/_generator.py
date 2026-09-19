@@ -170,9 +170,10 @@ b.add([
 ])
 b.row("Focused dashboards")
 b.add([(TEXT("", "**Drill down:** "
-    "[Nodes](/d/talos-nodes) · [Control plane](/d/talos-controlplane) · [Workloads](/d/talos-workloads) · "
-    "[Networking](/d/talos-network) · [GPU](/d/talos-gpu) · [Ingress](/d/talos-ingress) · "
-    "[Storage](/d/talos-storage) · [Databases](/d/talos-databases)  \n"
+    "[Nodes](/d/talos-nodes) · [Control plane](/d/talos-controlplane) · [Capacity](/d/talos-capacity) · "
+    "[Workloads](/d/talos-workloads) · [Runtime](/d/talos-runtime) · [Networking](/d/talos-network) · "
+    "[GPU](/d/talos-gpu) · [Ingress](/d/talos-ingress) · [Storage](/d/talos-storage) · "
+    "[Databases](/d/talos-databases) · [Certificates](/d/talos-certmanager) · [Observability](/d/talos-victoriametrics)  \n"
     "_Use the **Talos boards** dropdown (top-left) to jump between dashboards with the same time range._"), 24, 3)])
 boards.append(b)
 
@@ -410,6 +411,114 @@ b.add([
     (TS("HTTP responses by code", [("sum by (code)(rate(haproxy_frontend_http_responses_total[5m]))", "{{code}}")], unit="reqps"), 8, 8),
     (TS("Backend errors/s", [("sum(rate(haproxy_backend_response_errors_total[5m]))", "response errors"),
                              ("sum(rate(haproxy_backend_connection_errors_total[5m]))", "connection errors")], unit="short"), 8, 8),
+])
+boards.append(b)
+
+# ============================= CERT-MANAGER =============================
+b = Board("Talos — Certificates (cert-manager)", "talos-certmanager", ["talos"], [NS])
+b.row("Certificates")
+b.add([
+    (STAT("Certificates", 'count(certmanager_certificate_ready_status{condition="True"})'), 4, 4),
+    (STAT("Ready", 'sum(certmanager_certificate_ready_status{condition="True"})', thresholds=GREEN), 4, 4),
+    (STAT("Not ready", 'count(certmanager_certificate_ready_status{condition="True"} == 0) or vector(0)', thresholds=REDPOS, bg=True), 4, 4),
+    (STAT("Expiring < 14d", 'count((certmanager_certificate_expiration_timestamp_seconds - time()) < (14*86400)) or vector(0)', thresholds=REDPOS, bg=True), 4, 4),
+    (STAT("Expiring < 3d", 'count((certmanager_certificate_expiration_timestamp_seconds - time()) < (3*86400)) or vector(0)', thresholds=REDPOS, bg=True), 4, 4),
+    (STAT("Sync errors/s", "sum(rate(certmanager_controller_sync_error_count[5m]))", decimals=3, thresholds=REDPOS, bg=True), 4, 4),
+])
+b.row("Expiry & renewal")
+b.add([
+    (TABLE("Soonest to expire (days)", 'bottomk(20, (certmanager_certificate_expiration_timestamp_seconds{namespace=~"$namespace"} - time()) / 86400)', desc="Days until each certificate expires — soonest first.", sortdesc=False), 12, 9),
+    (TABLE("Certificates not Ready", 'certmanager_certificate_ready_status{condition="True",namespace=~"$namespace"} == 0', desc="Any certificate whose Ready condition is not True."), 12, 9),
+])
+b.row("Issuance (ACME / Let's Encrypt)")
+b.add([
+    (TS("ACME request rate by status", [("sum by (status)(rate(certmanager_http_acme_client_request_count[5m]))", "{{status}}")], unit="reqps"), 8, 8),
+    (TS("ACME request latency p99", [("histogram_quantile(0.99, sum by (le)(rate(certmanager_http_acme_client_request_duration_seconds_bucket[5m])))", "p99")], unit="s"), 8, 8),
+    (TS("Controller sync rate / errors", [("sum(rate(certmanager_controller_sync_call_count[5m]))", "syncs/s"),
+                                          ("sum(rate(certmanager_controller_sync_error_count[5m]))", "errors/s")], unit="short"), 8, 8),
+])
+boards.append(b)
+
+# ============================= OBSERVABILITY (VM/VL) =============================
+b = Board("Talos — Observability (VictoriaMetrics)", "talos-victoriametrics", ["talos"], [])
+b.row("Ingestion (vmagent)")
+b.add([
+    (TS("Rows pushed / sec", [("sum(rate(vmagent_remotewrite_global_rows_pushed_before_relabel_total[5m]))", "rows/s")], unit="short"), 8, 8),
+    (TS("Remote-write bytes / sec", [("sum(rate(vmagent_remotewrite_bytes_sent_total[5m]))", "bytes/s")], unit="Bps"), 8, 8),
+    (TS("Remote-write errors & drops / sec", [("sum(rate(vmagent_remotewrite_errors_total[5m]))", "rw errors"),
+                                              ("sum(rate(vmagent_remotewrite_packets_dropped_total[5m]))", "packets dropped")], unit="short", desc="Sustained >0 means data loss to storage."), 8, 8),
+])
+b.add([
+    (STAT("Series dropped by limit (1h)", "sum(increase(vmagent_hourly_series_limit_rows_dropped_total[1h])) or vector(0)", decimals=0, thresholds=REDPOS, bg=True), 6, 4),
+    (STAT("Remote-write conns", "sum(vmagent_remotewrite_conns)"), 6, 4),
+    (TS("Remote-write latency p99", [("histogram_quantile(0.99, sum by (le)(rate(vmagent_remotewrite_duration_seconds_bucket[5m])))", "p99")], unit="s"), 12, 8),
+])
+b.row("Query & storage")
+b.add([
+    (TS("HTTP request rate by path (top 10)", [("topk(10, sum by (path)(rate(vm_http_requests_total[5m])))", "{{path}}")], unit="reqps", table_legend=True), 12, 8),
+    (TS("Rollup result cache hit ratio", [("sum(rate(vm_rollup_result_cache_full_hits_total[5m])) / clamp_min(sum(rate(vm_rollup_result_cache_full_hits_total[5m])) + sum(rate(vm_rollup_result_cache_miss_total[5m])),1)", "hit ratio")], unit="percentunit", maxv=1), 12, 8),
+])
+b.add([
+    (TS("Data size on disk", [("sum(vm_data_size_bytes)", "data size")], unit="bytes"), 8, 8),
+    (TS("Free disk space", [('vm_free_disk_space_bytes', "{{instance}}")], unit="bytes", desc="vmstorage headroom."), 8, 8),
+    (TS("Pending rows / active merges", [("sum(vm_pending_rows)", "pending rows"),
+                                         ("sum(vm_active_merges)", "active merges")], unit="short"), 8, 8),
+])
+b.row("Component health")
+b.add([
+    (TS("VM / VL targets up by service", [('sum by (service)(up{service=~"victoria-metrics.*|victoria-logs.*"})', "{{service}}")], unit="short", table_legend=True), 12, 8),
+    (STAT("Concurrent-select limit reached (5m)", "sum(increase(vm_concurrent_select_limit_reached_total[5m])) or vector(0)", decimals=0, thresholds=REDPOS, bg=True), 12, 8),
+])
+boards.append(b)
+
+# ============================= RUNTIME (kubelet/containerd) =============================
+b = Board("Talos — Runtime (kubelet & containerd)", "talos-runtime", ["talos"], [NODE])
+b.row("Kubelet")
+b.add([
+    (TS("Running pods per node", [('kubelet_running_pods{instance=~"$node"}', "{{instance}}")], unit="short", table_legend=True), 8, 8),
+    (TS("Running containers per node", [('kubelet_running_containers{instance=~"$node"}', "{{instance}}")], unit="short"), 8, 8),
+    (TS("Pod start rate", [('sum(rate(kubelet_pod_start_duration_seconds_count{instance=~"$node"}[5m]))', "pod starts/s")], unit="short"), 8, 8),
+])
+b.add([
+    (TS("Runtime operations / sec", [('sum by (operation_type)(rate(kubelet_runtime_operations_total{instance=~"$node"}[5m]))', "{{operation_type}}")], unit="short", table_legend=True), 8, 8),
+    (TS("Runtime operation errors / sec", [('sum by (operation_type)(rate(kubelet_runtime_operations_errors_total{instance=~"$node"}[5m]))', "{{operation_type}}")], unit="short", desc="Any sustained errors are worth investigating."), 8, 8),
+    (TS("PLEG relist p99", [('histogram_quantile(0.99, sum by (le)(rate(kubelet_pleg_relist_duration_seconds_bucket{instance=~"$node"}[5m])))', "p99")], unit="s", desc="High PLEG latency = kubelet under pressure."), 8, 8),
+])
+b.row("containerd (CRI)")
+b.add([
+    (TS("CRI op latency p99", [("histogram_quantile(0.99, sum by (le)(rate(containerd_cri_container_create_seconds_bucket[5m])))", "create"),
+                               ("histogram_quantile(0.99, sum by (le)(rate(containerd_cri_container_start_seconds_bucket[5m])))", "start"),
+                               ("histogram_quantile(0.99, sum by (le)(rate(containerd_cri_container_stop_seconds_bucket[5m])))", "stop")], unit="s"), 12, 8),
+    (TS("Container lifecycle ops / sec", [("sum(rate(containerd_cri_container_create_seconds_count[5m]))", "create"),
+                                          ("sum(rate(containerd_cri_container_start_seconds_count[5m]))", "start"),
+                                          ("sum(rate(containerd_cri_container_stop_seconds_count[5m]))", "stop"),
+                                          ("sum(rate(containerd_cri_container_remove_seconds_count[5m]))", "remove")], unit="short"), 12, 8),
+])
+boards.append(b)
+
+# ============================= CAPACITY & SCHEDULING =============================
+b = Board("Talos — Capacity & Scheduling", "talos-capacity", ["talos"], [NS])
+b.row("Cluster commitment")
+b.add([
+    (GAUGE("CPU requests vs allocatable", '100 * sum(kube_pod_container_resource_requests{resource="cpu"}) / clamp_min(sum(kube_node_status_allocatable{resource="cpu"}),1)'), 5, 6),
+    (GAUGE("Memory requests vs allocatable", '100 * sum(kube_pod_container_resource_requests{resource="memory"}) / clamp_min(sum(kube_node_status_allocatable{resource="memory"}),1)'), 5, 6),
+    (GAUGE("Pods used vs capacity", '100 * count(kube_pod_info) / clamp_min(sum(kube_node_status_capacity{resource="pods"}),1)'), 5, 6),
+    (STAT("Pending pods", 'sum(kube_pod_status_phase{phase="Pending"})', thresholds=[{"color":"green","value":None},{"color":"yellow","value":1}], bg=True), 4, 6),
+    (STAT("Unschedulable", "sum(kube_pod_status_unschedulable) or vector(0)", thresholds=REDPOS, bg=True), 5, 6),
+])
+b.row("Per node")
+b.add([
+    (TS("CPU requests % of allocatable by node", [('100 * sum by (node)(kube_pod_container_resource_requests{resource="cpu"}) / clamp_min(sum by (node)(kube_node_status_allocatable{resource="cpu"}),1)', "{{node}}")], unit="percent", maxv=100, table_legend=True), 8, 8),
+    (TS("Memory requests % of allocatable by node", [('100 * sum by (node)(kube_pod_container_resource_requests{resource="memory"}) / clamp_min(sum by (node)(kube_node_status_allocatable{resource="memory"}),1)', "{{node}}")], unit="percent", maxv=100, table_legend=True), 8, 8),
+    (TS("Pods per node vs capacity", [("count by (node)(kube_pod_info)", "{{node}} pods"),
+                                      ('min by (node)(kube_node_status_capacity{resource="pods"})', "{{node}} capacity")], unit="short"), 8, 8),
+])
+b.row("By namespace & requests vs limits")
+b.add([
+    (TABLE("CPU requests by namespace", 'sum by (namespace)(kube_pod_container_resource_requests{resource="cpu",namespace=~"$namespace"})', desc="Cores requested."), 8, 8),
+    (TABLE("Memory requests by namespace", 'sum by (namespace)(kube_pod_container_resource_requests{resource="memory",namespace=~"$namespace"})', unit="bytes"), 8, 8),
+    (TS("Cluster requests vs limits", [('sum(kube_pod_container_resource_requests{resource="cpu"})', "cpu requests"),
+                                       ('sum(kube_pod_container_resource_limits{resource="cpu"})', "cpu limits")], unit="short", desc="Committed vs capped CPU."), 8, 8),
 ])
 boards.append(b)
 
