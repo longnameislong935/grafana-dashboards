@@ -1,0 +1,609 @@
+{
+  "title": "Talos \u2014 GPU (DCGM)",
+  "uid": "talos-gpu",
+  "tags": [
+    "talos"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "refresh": "30s",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "type": "datasource",
+        "label": "Data source",
+        "query": "prometheus",
+        "current": {},
+        "hide": 0,
+        "refresh": 1,
+        "regex": ""
+      },
+      {
+        "name": "node",
+        "type": "query",
+        "label": "Node",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "query": {
+          "query": "label_values(node_memory_MemTotal_bytes, instance)",
+          "refId": "node"
+        },
+        "definition": "label_values(node_memory_MemTotal_bytes, instance)",
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "refresh": 2,
+        "sort": 1
+      }
+    ]
+  },
+  "links": [
+    {
+      "type": "dashboards",
+      "tags": [
+        "talos"
+      ],
+      "title": "Talos boards",
+      "asDropdown": true,
+      "includeVars": true,
+      "keepTime": true,
+      "targetBlank": false,
+      "icon": "external link"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "row",
+      "title": "Utilisation & memory",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 91,
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "GPU utilisation %",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "id": 92,
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "max": 100
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "DCGM_FI_DEV_GPU_UTIL{Hostname=~\"$node\"}",
+          "legendFormat": "{{Hostname}} gpu{{gpu}} {{modelName}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "GPU memory used %",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "id": 93,
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "max": 100
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "100 * DCGM_FI_DEV_FB_USED{Hostname=~\"$node\"} / clamp_min(DCGM_FI_DEV_FB_USED{Hostname=~\"$node\"} + DCGM_FI_DEV_FB_FREE{Hostname=~\"$node\"},1)",
+          "legendFormat": "{{Hostname}} gpu{{gpu}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "title": "Thermals & power",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 94,
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "Temperature",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "id": 95,
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 10
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "DCGM_FI_DEV_GPU_TEMP{Hostname=~\"$node\"}",
+          "legendFormat": "{{Hostname}} gpu{{gpu}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Power draw",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "id": 96,
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 10
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "DCGM_FI_DEV_POWER_USAGE{Hostname=~\"$node\"}",
+          "legendFormat": "{{Hostname}} gpu{{gpu}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Energy (rate)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "id": 97,
+      "description": "Derived from total energy counter (mJ).",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 10
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "rate(DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION{Hostname=~\"$node\"}[5m]) / 1000",
+          "legendFormat": "{{Hostname}} gpu{{gpu}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "title": "Clocks & encoder",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 98,
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "SM / memory clock",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "id": 99,
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 19
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "MHz",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "DCGM_FI_DEV_SM_CLOCK{Hostname=~\"$node\"}",
+          "legendFormat": "{{Hostname}} gpu{{gpu}} sm",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "DCGM_FI_DEV_MEM_CLOCK{Hostname=~\"$node\"}",
+          "legendFormat": "{{Hostname}} gpu{{gpu}} mem",
+          "refId": "B",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Encoder / decoder util %",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "id": 100,
+      "description": "Useful for transcoding (tdarr / Plex).",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 19
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "max": 100
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "DCGM_FI_DEV_ENC_UTIL{Hostname=~\"$node\"}",
+          "legendFormat": "{{Hostname}} gpu{{gpu}} enc",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "DCGM_FI_DEV_DEC_UTIL{Hostname=~\"$node\"}",
+          "legendFormat": "{{Hostname}} gpu{{gpu}} dec",
+          "refId": "B",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory-copy util %",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "id": 101,
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 19
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "max": 100
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "DCGM_FI_DEV_MEM_COPY_UTIL{Hostname=~\"$node\"}",
+          "legendFormat": "{{Hostname}} gpu{{gpu}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ]
+    }
+  ]
+}
