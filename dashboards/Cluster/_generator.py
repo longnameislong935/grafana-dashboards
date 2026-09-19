@@ -173,7 +173,8 @@ b.add([(TEXT("", "**Drill down:** "
     "[Nodes](/d/talos-nodes) · [Control plane](/d/talos-controlplane) · [Capacity](/d/talos-capacity) · "
     "[Workloads](/d/talos-workloads) · [Runtime](/d/talos-runtime) · [Networking](/d/talos-network) · "
     "[GPU](/d/talos-gpu) · [Ingress](/d/talos-ingress) · [Storage](/d/talos-storage) · "
-    "[Databases](/d/talos-databases) · [Certificates](/d/talos-certmanager) · [Observability](/d/talos-victoriametrics)  \n"
+    "[Databases](/d/talos-databases) · [Certificates](/d/talos-certmanager) · [Observability](/d/talos-victoriametrics) · "
+    "[Media](/d/talos-media) · [Apps](/d/talos-apps)  \n"
     "_Use the **Talos boards** dropdown (top-left) to jump between dashboards with the same time range._"), 24, 3)])
 boards.append(b)
 
@@ -519,6 +520,88 @@ b.add([
     (TABLE("Memory requests by namespace", 'sum by (namespace)(kube_pod_container_resource_requests{resource="memory",namespace=~"$namespace"})', unit="bytes"), 8, 8),
     (TS("Cluster requests vs limits", [('sum(kube_pod_container_resource_requests{resource="cpu"})', "cpu requests"),
                                        ('sum(kube_pod_container_resource_limits{resource="cpu"})', "cpu limits")], unit="short", desc="Committed vs capped CPU."), 8, 8),
+])
+boards.append(b)
+
+# ============================= MEDIA =============================
+b = Board("Talos — Media", "talos-media", ["talos"], [])
+b.row("Library health (exportarr)")
+b.add([
+    (STAT("Radarr", 'radarr_system_status', thresholds=GOODBAD, bg=True, textmode="value"), 3, 4),
+    (STAT("Movies", 'radarr_movie_total'), 3, 4),
+    (STAT("Movies missing", 'radarr_movie_missing_total', thresholds=[{"color":"green","value":None},{"color":"yellow","value":1}], bg=True), 3, 4),
+    (STAT("Radarr queue", 'sum(radarr_queue_total)'), 3, 4),
+    (STAT("Sonarr", 'sonarr_system_status', thresholds=GOODBAD, bg=True, textmode="value"), 3, 4),
+    (STAT("Series", 'sonarr_series_total'), 3, 4),
+    (STAT("Episodes missing", 'sonarr_episode_missing_total', thresholds=[{"color":"green","value":None},{"color":"yellow","value":1}], bg=True), 3, 4),
+    (STAT("Sonarr queue", 'sum(sonarr_queue_total)'), 3, 4),
+])
+b.row("Library detail")
+b.add([
+    (TS("Radarr movies", [("radarr_movie_monitored_total", "monitored"), ("radarr_movie_missing_total", "missing"), ("radarr_movie_wanted_total", "wanted")], unit="short"), 8, 8),
+    (TS("Sonarr episodes", [("sonarr_episode_total", "total"), ("sonarr_episode_downloaded_total", "downloaded"), ("sonarr_episode_missing_total", "missing")], unit="short"), 8, 8),
+    (TS("Health issues", [("sum(radarr_system_health_issues)", "radarr"), ("sum(sonarr_system_health_issues)", "sonarr"), ("sum(prowlarr_system_health_issues)", "prowlarr")], unit="short", desc="exportarr health-check issues per app."), 8, 8),
+])
+b.row("Prowlarr")
+b.add([
+    (STAT("Prowlarr", 'prowlarr_system_status', thresholds=GOODBAD, bg=True, textmode="value"), 4, 6),
+    (TS("Indexer grabs / queries (rate)", [("sum(rate(prowlarr_indexer_grabs_total[5m]))", "grabs/s"), ("sum(rate(prowlarr_indexer_queries_total[5m]))", "queries/s")], unit="short", desc="VERIFY metric names against your exportarr version."), 20, 6),
+])
+b.row("Downloads (Transmission)")
+b.add([
+    (TS("Throughput", [("sum(transmission_session_stats_download_speed_bytes)", "download"), ("sum(transmission_session_stats_upload_speed_bytes)", "upload")], unit="Bps"), 8, 8),
+    (TS("Torrents", [("sum(transmission_session_stats_torrent_total)", "total"), ("sum(transmission_session_stats_active_torrent_count)", "active"), ("sum(transmission_session_stats_paused_torrent_count)", "paused")], unit="short"), 8, 8),
+    (TS("Free space", [("transmission_free_space", "{{namespace}}")], unit="bytes", desc="Download volume free space per instance."), 8, 8),
+])
+b.row("Frigate (NVR)")
+b.add([
+    (TS("Camera FPS", [("frigate_camera_fps", "{{camera_name}}")], unit="short", table_legend=True), 8, 8),
+    (TS("Detection FPS", [("frigate_detection_fps", "{{camera_name}}")], unit="short"), 8, 8),
+    (TS("Detector inference speed", [("frigate_detector_inference_speed_seconds", "{{name}}")], unit="s", desc="Lower is better; rising = detector overloaded."), 8, 8),
+])
+b.row("Plex")
+b.add([
+    (STAT("Plex up", 'up{job="plex"}', thresholds=GOODBAD, bg=True, textmode="value"), 4, 6),
+    (TEXT("", "Plex exporter metric names vary by image — GPU **transcode** load is already on the **GPU** board (DCGM encoder/decoder util). Paste the `plex_*` sample and I'll add sessions / transcode / bandwidth panels here with the right names."), 20, 6),
+])
+boards.append(b)
+
+# ============================= APPS =============================
+b = Board("Talos — Apps", "talos-apps", ["talos"], [])
+b.row("Home Assistant")
+b.add([
+    (STAT("Entities available", 'sum(hass_entity_available)', thresholds=GREEN), 4, 4),
+    (STAT("HA up", 'up{job="homeassistant"}', thresholds=GOODBAD, bg=True, textmode="value"), 4, 4),
+    (STAT("Automations/h", 'sum(increase(hass_automation_triggered_count[1h]))', decimals=0), 4, 4),
+    (TS("Temperature sensors", [("hass_sensor_temperature_celsius", "{{friendly_name}}")], unit="celsius", desc="VERIFY label (friendly_name/entity)."), 12, 8),
+])
+b.add([
+    (TS("Humidity sensors", [("hass_sensor_humidity_percent", "{{friendly_name}}")], unit="percent", maxv=100), 8, 8),
+    (TS("Battery levels", [("hass_battery_level", "{{friendly_name}}")], unit="percent", maxv=100, desc="Low batteries to watch; VERIFY metric name (hass_battery_level vs hass_sensor_battery_percent)."), 8, 8),
+    (TS("Automations triggered / min", [("sum(rate(hass_automation_triggered_count[5m])) * 60", "triggers/min")], unit="short"), 8, 8),
+])
+b.row("Gatus — synthetic uptime")
+b.add([
+    (TABLE("Endpoint status (1=up)", "gatus_results_connected", desc="Per-endpoint reachability."), 8, 8),
+    (TS("Success ratio", [("sum by (key)(rate(gatus_results_total{success=\"true\"}[5m])) / clamp_min(sum by (key)(rate(gatus_results_total[5m])),1)", "{{key}}")], unit="percentunit", maxv=1, table_legend=True), 8, 8),
+    (TS("Response time by endpoint", [("gatus_results_duration_seconds", "{{key}}")], unit="s"), 8, 8),
+])
+b.add([
+    (TABLE("Endpoint cert expiry (days)", "gatus_results_certificate_expiration_seconds / 86400", desc="Days until each monitored endpoint's TLS cert expires.", sortdesc=False), 12, 7),
+    (TS("HTTP status codes", [("sum by (code)(rate(gatus_results_code_total[5m]))", "{{code}}")], unit="short"), 12, 7),
+])
+b.row("Authentik / n8n / Immich")
+b.add([
+    (STAT("Authentik up", 'up{job="authentik"}', thresholds=GOODBAD, bg=True, textmode="value"), 4, 6),
+    (STAT("n8n workflows", 'sum(n8n_active_workflow_count)'), 4, 6),
+    (STAT("n8n up", 'up{job="n8n"}', thresholds=GOODBAD, bg=True, textmode="value"), 4, 6),
+    (STAT("Immich up", 'up{job="immich"}', thresholds=GOODBAD, bg=True, textmode="value"), 4, 6),
+    (STAT("HA up", 'up{job="homeassistant"}', thresholds=GOODBAD, bg=True, textmode="value"), 4, 6),
+    (STAT("Gatus up", 'up{job="gatus"}', thresholds=GOODBAD, bg=True, textmode="value"), 4, 6),
+])
+b.add([
+    (TS("Authentik request rate", [("sum(rate(authentik_main_request_duration_seconds_count[5m]))", "req/s")], unit="reqps", desc="VERIFY metric name against your Authentik version."), 12, 7),
+    (TEXT("", "**Authentik / n8n / Immich** expose richer metrics than the tiles above (logins & flows; workflow executions; job-queue depth), but the exact metric names vary by version. Paste the `authentik_*`, `n8n_*`, `immich_*` sample and I'll flesh these rows out with the real names."), 12, 7),
 ])
 boards.append(b)
 
