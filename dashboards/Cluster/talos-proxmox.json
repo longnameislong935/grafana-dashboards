@@ -1,9 +1,7 @@
 {
   "title": "Talos \u2014 Proxmox",
   "uid": "talos-proxmox",
-  "tags": [
-    "talos"
-  ],
+  "tags": ["talos"],
   "timezone": "browser",
   "schemaVersion": 39,
   "version": 1,
@@ -20,9 +18,7 @@
   "links": [
     {
       "type": "dashboards",
-      "tags": [
-        "talos"
-      ],
+      "tags": ["talos"],
       "title": "Talos boards",
       "asDropdown": true,
       "includeVars": true,
@@ -57,14 +53,14 @@
         "x": 0,
         "y": 0
       },
-      "id": 304,
+      "id": 308,
       "panels": []
     },
     {
       "type": "stat",
       "title": "Exporter up",
       "datasource": "victoria-metrics",
-      "id": 305,
+      "id": 309,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -96,9 +92,7 @@
       },
       "options": {
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -123,7 +117,7 @@
       "type": "stat",
       "title": "Nodes up",
       "datasource": "victoria-metrics",
-      "id": 306,
+      "id": 310,
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -151,9 +145,7 @@
       },
       "options": {
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -178,7 +170,7 @@
       "type": "stat",
       "title": "VMs running",
       "datasource": "victoria-metrics",
-      "id": 307,
+      "id": 311,
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -198,9 +190,7 @@
       },
       "options": {
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -225,7 +215,7 @@
       "type": "stat",
       "title": "LXC running",
       "datasource": "victoria-metrics",
-      "id": 308,
+      "id": 312,
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -245,9 +235,7 @@
       },
       "options": {
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -272,7 +260,7 @@
       "type": "stat",
       "title": "CPU used",
       "datasource": "victoria-metrics",
-      "id": 309,
+      "id": 313,
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -309,9 +297,7 @@
       },
       "options": {
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -336,7 +322,7 @@
       "type": "stat",
       "title": "Memory used",
       "datasource": "victoria-metrics",
-      "id": 310,
+      "id": 314,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -373,9 +359,7 @@
       },
       "options": {
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -400,7 +384,7 @@
       "type": "stat",
       "title": "Guests failed",
       "datasource": "victoria-metrics",
-      "id": 311,
+      "id": 315,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -432,9 +416,7 @@
       },
       "options": {
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -465,14 +447,14 @@
         "x": 0,
         "y": 5
       },
-      "id": 312,
+      "id": 316,
       "panels": []
     },
     {
       "type": "timeseries",
       "title": "CPU % by node",
       "datasource": "victoria-metrics",
-      "id": 313,
+      "id": 317,
       "description": "",
       "gridPos": {
         "h": 8,
@@ -502,10 +484,7 @@
         "legend": {
           "displayMode": "table",
           "placement": "bottom",
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ]
+          "calcs": ["lastNotNull", "max"]
         },
         "tooltip": {
           "mode": "multi",
@@ -527,7 +506,7 @@
       "type": "timeseries",
       "title": "Memory % by node",
       "datasource": "victoria-metrics",
-      "id": 314,
+      "id": 318,
       "description": "",
       "gridPos": {
         "h": 8,
@@ -557,10 +536,7 @@
         "legend": {
           "displayMode": "table",
           "placement": "bottom",
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ]
+          "calcs": ["lastNotNull", "max"]
         },
         "tooltip": {
           "mode": "multi",
@@ -582,7 +558,7 @@
       "type": "timeseries",
       "title": "Root FS % by node",
       "datasource": "victoria-metrics",
-      "id": 315,
+      "id": 319,
       "description": "",
       "gridPos": {
         "h": 8,
@@ -640,14 +616,14 @@
         "x": 0,
         "y": 14
       },
-      "id": 316,
+      "id": 320,
       "panels": []
     },
     {
       "type": "table",
       "title": "Running guests",
       "datasource": "victoria-metrics",
-      "id": 317,
+      "id": 321,
       "description": "1 = running. Joined with guest name/node/type.",
       "gridPos": {
         "h": 8,
@@ -706,7 +682,7 @@
       "type": "timeseries",
       "title": "Top guests by CPU",
       "datasource": "victoria-metrics",
-      "id": 318,
+      "id": 322,
       "description": "",
       "gridPos": {
         "h": 8,
@@ -735,10 +711,7 @@
         "legend": {
           "displayMode": "table",
           "placement": "bottom",
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ]
+          "calcs": ["lastNotNull", "max"]
         },
         "tooltip": {
           "mode": "multi",
@@ -760,7 +733,7 @@
       "type": "timeseries",
       "title": "Top guests by memory",
       "datasource": "victoria-metrics",
-      "id": 319,
+      "id": 323,
       "description": "",
       "gridPos": {
         "h": 8,
@@ -789,10 +762,7 @@
         "legend": {
           "displayMode": "table",
           "placement": "bottom",
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ]
+          "calcs": ["lastNotNull", "max"]
         },
         "tooltip": {
           "mode": "multi",
@@ -820,14 +790,14 @@
         "x": 0,
         "y": 23
       },
-      "id": 320,
+      "id": 324,
       "panels": []
     },
     {
       "type": "timeseries",
       "title": "Guest network (top 10)",
       "datasource": "victoria-metrics",
-      "id": 321,
+      "id": 325,
       "description": "",
       "gridPos": {
         "h": 8,
@@ -878,7 +848,7 @@
       "type": "timeseries",
       "title": "Guest disk I/O (top 10)",
       "datasource": "victoria-metrics",
-      "id": 322,
+      "id": 326,
       "description": "",
       "gridPos": {
         "h": 8,
@@ -929,7 +899,7 @@
       "type": "timeseries",
       "title": "Storage used % ",
       "datasource": "victoria-metrics",
-      "id": 323,
+      "id": 327,
       "description": "",
       "gridPos": {
         "h": 8,
@@ -959,10 +929,7 @@
         "legend": {
           "displayMode": "table",
           "placement": "bottom",
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ]
+          "calcs": ["lastNotNull", "max"]
         },
         "tooltip": {
           "mode": "multi",
