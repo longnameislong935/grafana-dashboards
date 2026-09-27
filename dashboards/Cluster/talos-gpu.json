@@ -1,9 +1,7 @@
 {
   "title": "Talos \u2014 GPU (DCGM)",
   "uid": "talos-gpu",
-  "tags": [
-    "talos"
-  ],
+  "tags": ["talos"],
   "timezone": "browser",
   "schemaVersion": 39,
   "version": 1,
@@ -22,10 +20,10 @@
         "label": "Node",
         "datasource": "victoria-metrics",
         "query": {
-          "query": "label_values(node_memory_MemTotal_bytes, instance)",
+          "query": "label_values(DCGM_FI_DEV_GPU_UTIL, Hostname)",
           "refId": "node"
         },
-        "definition": "label_values(node_memory_MemTotal_bytes, instance)",
+        "definition": "label_values(DCGM_FI_DEV_GPU_UTIL, Hostname)",
         "includeAll": true,
         "multi": true,
         "allValue": ".*",
@@ -41,9 +39,7 @@
   "links": [
     {
       "type": "dashboards",
-      "tags": [
-        "talos"
-      ],
+      "tags": ["talos"],
       "title": "Talos boards",
       "asDropdown": true,
       "includeVars": true,
@@ -115,10 +111,7 @@
         "legend": {
           "displayMode": "table",
           "placement": "bottom",
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ]
+          "calcs": ["lastNotNull", "max"]
         },
         "tooltip": {
           "mode": "multi",
