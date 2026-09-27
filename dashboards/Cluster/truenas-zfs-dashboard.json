@@ -1,42 +1,33 @@
 {
-  "__inputs": [],
-  "annotations": { "list": [] },
-  "editable": true,
-  "graphTooltip": 1,
-  "title": "TrueNAS ZFS Storage",
+  "title": "TrueNAS — ZFS Storage",
+  "uid": "truenas-zfs-storage",
   "tags": ["truenas", "zfs", "storage"],
   "timezone": "browser",
   "schemaVersion": 39,
-  "time": { "from": "now-30d", "to": "now" },
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
   "refresh": "5m",
-  "templating": {
+  "time": { "from": "now-30d", "to": "now" },
+  "templating": { "list": [] },
+  "annotations": {
     "list": [
       {
-        "name": "datasource",
-        "label": "Data source",
-        "type": "datasource",
-        "query": "prometheus",
-        "current": {},
-        "hide": 0
-      },
-      {
-        "name": "instance",
-        "label": "Instance",
-        "type": "query",
-        "datasource": { "type": "prometheus", "uid": "${datasource}" },
-        "query": "label_values(zfs_pool_size_bytes, instance)",
-        "refresh": 2,
-        "current": {},
-        "hide": 0
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
       }
     ]
   },
   "panels": [
     {
-      "id": 1,
-      "title": "Pool capacity",
       "type": "gauge",
-      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "title": "Pool capacity",
+      "datasource": "victoria-metrics",
+      "id": 1,
       "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
       "fieldConfig": {
         "defaults": {
@@ -51,22 +42,32 @@
               { "color": "red", "value": 80 }
             ]
           }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
         }
       },
       "targets": [
         {
+          "datasource": "victoria-metrics",
+          "expr": "zfs_pool_capacity_percent",
+          "legendFormat": "{{pool}}",
           "refId": "A",
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
-          "expr": "zfs_pool_capacity_percent{instance=\"$instance\"}",
-          "legendFormat": "{{pool}}"
+          "range": false,
+          "instant": true
         }
       ]
     },
     {
-      "id": 2,
-      "title": "Free space",
       "type": "stat",
-      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "title": "Free space",
+      "datasource": "victoria-metrics",
+      "id": 2,
       "gridPos": { "h": 6, "w": 6, "x": 6, "y": 0 },
       "fieldConfig": {
         "defaults": {
@@ -80,150 +81,317 @@
               { "color": "green", "value": 5497558138880 }
             ]
           }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
         }
       },
-      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
       "targets": [
         {
+          "datasource": "victoria-metrics",
+          "expr": "zfs_pool_free_bytes",
+          "legendFormat": "{{pool}}",
           "refId": "A",
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
-          "expr": "zfs_pool_free_bytes{instance=\"$instance\"}",
-          "legendFormat": "{{pool}}"
+          "range": false,
+          "instant": true
         }
       ]
     },
     {
-      "id": 3,
-      "title": "Fragmentation",
       "type": "gauge",
-      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "title": "Fragmentation",
+      "datasource": "victoria-metrics",
+      "id": 3,
       "gridPos": { "h": 6, "w": 6, "x": 12, "y": 0 },
       "fieldConfig": {
         "defaults": {
-          "unit": "percent", "min": 0, "max": 100,
-          "thresholds": { "mode": "absolute", "steps": [
-            { "color": "green", "value": null },
-            { "color": "yellow", "value": 50 },
-            { "color": "red", "value": 75 }
-          ] }
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 50 },
+              { "color": "red", "value": 75 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
         }
       },
       "targets": [
-        { "refId": "A", "datasource": { "type": "prometheus", "uid": "${datasource}" },
-          "expr": "zfs_pool_fragmentation_percent{instance=\"$instance\"}", "legendFormat": "{{pool}}" }
+        {
+          "datasource": "victoria-metrics",
+          "expr": "zfs_pool_fragmentation_percent",
+          "legendFormat": "{{pool}}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
       ]
     },
     {
-      "id": 4,
-      "title": "Pool health",
       "type": "stat",
-      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "title": "Pool health",
+      "datasource": "victoria-metrics",
+      "id": 4,
       "gridPos": { "h": 6, "w": 6, "x": 18, "y": 0 },
       "fieldConfig": {
         "defaults": {
+          "unit": "none",
           "mappings": [
-            { "type": "value", "options": { "1": { "text": "ONLINE", "color": "green" }, "0": { "text": "DEGRADED", "color": "red" } } }
+            {
+              "type": "value",
+              "options": {
+                "1": { "text": "ONLINE", "color": "green" },
+                "0": { "text": "NOT ONLINE", "color": "red" }
+              }
+            }
           ],
           "color": { "mode": "thresholds" },
-          "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "green", "value": 1 } ] }
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
         }
       },
-      "options": { "colorMode": "background", "reduceOptions": { "calcs": ["lastNotNull"] } },
       "targets": [
-        { "refId": "A", "datasource": { "type": "prometheus", "uid": "${datasource}" },
-          "expr": "zfs_pool_health{instance=\"$instance\"}", "legendFormat": "{{pool}}" }
+        {
+          "datasource": "victoria-metrics",
+          "expr": "zfs_pool_health",
+          "legendFormat": "{{pool}}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
       ]
     },
     {
-      "id": 5,
-      "title": "Space used by snapshots (per dataset)",
       "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "title": "Space used by snapshots (per dataset)",
+      "datasource": "victoria-metrics",
+      "id": 5,
+      "description": "The snapshot-bloat panel. Rising lines are old/churny snapshots eating space.",
       "gridPos": { "h": 9, "w": 12, "x": 0, "y": 6 },
-      "description": "The snapshot-bloat panel. Rising lines here are old/churny snapshots eating space.",
       "fieldConfig": {
         "defaults": {
           "unit": "bytes",
-          "custom": { "drawStyle": "line", "fillOpacity": 10, "stacking": { "mode": "none" } }
-        }
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": []
       },
-      "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [
-        { "refId": "A", "datasource": { "type": "prometheus", "uid": "${datasource}" },
-          "expr": "topk(15, zfs_dataset_usedbysnapshots_bytes{instance=\"$instance\"})", "legendFormat": "{{dataset}}" }
-      ]
-    },
-    {
-      "id": 6,
-      "title": "Live data used (per dataset)",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "${datasource}" },
-      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 6 },
-      "fieldConfig": {
-        "defaults": { "unit": "bytes", "custom": { "drawStyle": "line", "fillOpacity": 10 } }
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull", "max"]
+        },
+        "tooltip": { "mode": "multi", "sort": "desc" }
       },
-      "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [
-        { "refId": "A", "datasource": { "type": "prometheus", "uid": "${datasource}" },
-          "expr": "topk(15, zfs_dataset_usedbydataset_bytes{instance=\"$instance\"})", "legendFormat": "{{dataset}}" }
-      ]
-    },
-    {
-      "id": 7,
-      "title": "Snapshot count (per dataset)",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "${datasource}" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 15 },
-      "fieldConfig": { "defaults": { "unit": "short", "custom": { "drawStyle": "line", "fillOpacity": 0 } } },
-      "options": { "legend": { "displayMode": "table", "placement": "right", "calcs": ["lastNotNull"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [
-        { "refId": "A", "datasource": { "type": "prometheus", "uid": "${datasource}" },
-          "expr": "topk(15, zfs_dataset_snapshot_count{instance=\"$instance\"})", "legendFormat": "{{dataset}}" }
-      ]
-    },
-    {
-      "id": 8,
-      "title": "Reclaimable from duplicates (weekly scan)",
-      "type": "bargauge",
-      "datasource": { "type": "prometheus", "uid": "${datasource}" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 15 },
-      "description": "Populated by the weekly --with-dupes run (fclones).",
-      "fieldConfig": { "defaults": { "unit": "bytes", "color": { "mode": "continuous-GrYlRd" } } },
-      "options": { "orientation": "horizontal", "displayMode": "gradient", "reduceOptions": { "calcs": ["lastNotNull"] } },
-      "targets": [
-        { "refId": "A", "datasource": { "type": "prometheus", "uid": "${datasource}" },
-          "expr": "zfs_duplicate_reclaimable_bytes{instance=\"$instance\"}", "legendFormat": "{{path}}" }
-      ]
-    },
-    {
-      "id": 9,
-      "title": "Directory sizes (top 50)",
-      "type": "table",
-      "datasource": { "type": "prometheus", "uid": "${datasource}" },
-      "gridPos": { "h": 13, "w": 24, "x": 0, "y": 23 },
-      "description": "Per-directory usage from the daily du scan (truenas_dir_used_bytes).",
-      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
-      "options": { "showHeader": true, "cellHeight": "sm", "footer": { "show": false } },
       "targets": [
         {
+          "datasource": "victoria-metrics",
+          "expr": "topk(15, zfs_dataset_usedbysnapshots_bytes)",
+          "legendFormat": "{{dataset}}",
           "refId": "A",
-          "datasource": { "type": "prometheus", "uid": "${datasource}" },
-          "expr": "topk(50, truenas_dir_used_bytes{instance=\"$instance\"})",
-          "format": "table",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Live data used (per dataset)",
+      "datasource": "victoria-metrics",
+      "id": 6,
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull", "max"]
+        },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "datasource": "victoria-metrics",
+          "expr": "topk(15, zfs_dataset_usedbydataset_bytes)",
+          "legendFormat": "{{dataset}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Snapshot count (per dataset)",
+      "datasource": "victoria-metrics",
+      "id": 7,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 15 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "datasource": "victoria-metrics",
+          "expr": "topk(15, zfs_dataset_snapshot_count)",
+          "legendFormat": "{{dataset}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ]
+    },
+    {
+      "type": "bargauge",
+      "title": "Reclaimable from duplicates (weekly scan)",
+      "datasource": "victoria-metrics",
+      "id": 8,
+      "description": "Populated by the weekly --with-dupes run (fclones).",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 15 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": { "mode": "continuous-GrYlRd" }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "datasource": "victoria-metrics",
+          "expr": "zfs_duplicate_reclaimable_bytes",
+          "legendFormat": "{{path}}",
+          "refId": "A",
+          "range": false,
           "instant": true
         }
-      ],
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Directory sizes (top 50)",
+      "datasource": "victoria-metrics",
+      "id": 9,
+      "description": "Per-directory usage from the daily du scan (truenas_dir_used_bytes).",
+      "gridPos": { "h": 13, "w": 24, "x": 0, "y": 23 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": { "align": "auto", "filterable": true }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [{ "displayName": "Size", "desc": true }]
+      },
       "transformations": [
         {
           "id": "organize",
           "options": {
-            "excludeByName": { "Time": true, "instance": true, "__name__": true, "job": true },
-            "renameByName": { "Value #A": "Size", "Value": "Size", "dataset": "Dataset", "path": "Path" }
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true
+            },
+            "renameByName": {
+              "Value": "Size",
+              "dataset": "Dataset",
+              "path": "Path"
+            }
           }
-        },
+        }
+      ],
+      "targets": [
         {
-          "id": "sortBy",
-          "options": { "fields": {}, "sort": [ { "field": "Size", "desc": true } ] }
+          "datasource": "victoria-metrics",
+          "expr": "topk(50, truenas_dir_used_bytes)",
+          "legendFormat": "",
+          "refId": "A",
+          "range": false,
+          "instant": true,
+          "format": "table"
         }
       ]
     }
