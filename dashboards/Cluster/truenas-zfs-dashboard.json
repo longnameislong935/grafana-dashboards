@@ -338,7 +338,7 @@
       "targets": [
         {
           "datasource": "victoria-metrics",
-          "expr": "zfs_duplicate_reclaimable_bytes",
+          "expr": "last_over_time(zfs_duplicate_reclaimable_bytes[8d])",
           "legendFormat": "{{path}}",
           "refId": "A",
           "range": false,
@@ -386,7 +386,7 @@
       "targets": [
         {
           "datasource": "victoria-metrics",
-          "expr": "topk(50, truenas_dir_used_bytes)",
+          "expr": "topk(50, last_over_time(truenas_dir_used_bytes[25h]))",
           "legendFormat": "",
           "refId": "A",
           "range": false,
